@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaTimes, FaCheck, FaSpinner, FaQrcode } from 'react-icons/fa';
-import axios from 'axios';
+import api from '../services/api';
 
 const CheckoutModal = ({ isOpen, onClose, product, onSuccess }) => {
     const [customerName, setCustomerName] = useState('');
@@ -29,7 +29,7 @@ const CheckoutModal = ({ isOpen, onClose, product, onSuccess }) => {
             }
 
             // Include Token Header
-            const res = await axios.post('http://localhost:5000/api/files/order', formData, {
+            const res = await api.post('/api/files/order', formData, {
                 headers: {
                     'x-auth-token': token
                 }

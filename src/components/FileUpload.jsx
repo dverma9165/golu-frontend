@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { FaCloudUploadAlt, FaSpinner, FaCheckCircle, FaFileAlt, FaImage } from 'react-icons/fa';
 
 const FileUpload = ({ onUploadSuccess, adminPassword }) => {
@@ -39,7 +39,7 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
     setMessage('');
 
     try {
-      await axios.post('http://localhost:5000/api/files/upload', formData, {
+      await api.post('/api/files/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'x-admin-password': adminPassword

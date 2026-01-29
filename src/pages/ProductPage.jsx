@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 import { FaShoppingCart, FaWhatsapp, FaShieldAlt, FaCartPlus, FaDownload, FaLock, FaCheckCircle } from 'react-icons/fa';
 import CheckoutModal from '../components/CheckoutModal';
 
@@ -23,7 +23,7 @@ const ProductPage = ({ token }) => {
 
     const fetchProduct = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/files/${id}`);
+            const res = await api.get(`/api/files/${id}`);
             setProduct(res.data);
         } catch (err) {
             setError('Product not found.');
@@ -34,7 +34,7 @@ const ProductPage = ({ token }) => {
 
     const checkPurchaseStatus = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/files/my-orders', {
+            const res = await api.get('/api/files/my-orders', {
                 headers: { 'x-auth-token': token }
             });
             const orders = res.data;
@@ -56,7 +56,7 @@ const ProductPage = ({ token }) => {
             return;
         }
         try {
-            await axios.post('http://localhost:5000/api/auth/cart',
+            await api.post('/api/auth/cart',
                 { productId: product._id },
                 { headers: { 'x-auth-token': token } }
             );
@@ -68,7 +68,7 @@ const ProductPage = ({ token }) => {
 
     const handleDownload = async () => {
         try {
-            const res = await axios.post('http://localhost:5000/api/files/download',
+            const res = await api.post('/api/files/download',
                 { orderId },
                 { headers: { 'x-auth-token': token } }
             );

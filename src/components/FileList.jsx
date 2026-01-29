@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { Link } from 'react-router-dom';
 import { FaFilePdf, FaFileExcel, FaFileImage, FaFileAlt, FaEye } from 'react-icons/fa';
 
@@ -24,7 +24,7 @@ const FileList = ({ refreshTrigger }) => {
     if (loading) return;
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:5000/api/files?page=${page}&limit=12`);
+      const res = await api.get(`/api/files?page=${page}&limit=12`);
 
       setFiles(prevFiles => {
         const newFiles = res.data.files.filter(newFile => !prevFiles.some(existing => existing._id === newFile._id));

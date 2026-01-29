@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from '../services/api';
 
 const urlBase64ToUint8Array = (base64String) => {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -32,7 +32,7 @@ export const subscribeUser = async (role = 'user', adminPassword = null) => {
                 // Fetch Public Key
                 // Since this might be called from Admin dashboard without auth token (just password), 
                 // or User dashboard with token.
-                const response = await axios.get('http://localhost:5000/api/notifications/config');
+                const response = await api.get('/api/notifications/config');
                 const publicVapidKey = response.data.publicKey;
 
                 console.log('Registering Push...');
@@ -58,7 +58,7 @@ export const subscribeUser = async (role = 'user', adminPassword = null) => {
                 }
             }
 
-            await axios.post('http://localhost:5000/api/notifications/subscribe', subscription, {
+            await api.post('/api/notifications/subscribe', subscription, {
                 headers: headers
             });
 

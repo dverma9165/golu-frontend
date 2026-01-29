@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { Link } from 'react-router-dom';
 import { FaShoppingCart, FaTrash } from 'react-icons/fa';
 
@@ -13,7 +13,7 @@ const CartPage = ({ token }) => {
 
     const fetchCart = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/auth/cart', {
+            const res = await api.get('/api/auth/cart', {
                 headers: { 'x-auth-token': token }
             });
             setCart(res.data.cart || []);

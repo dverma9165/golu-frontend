@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { Link } from 'react-router-dom';
 import FileUpload from '../components/FileUpload';
 import { FaCheck, FaExclamationCircle, FaSpinner } from 'react-icons/fa';
@@ -16,7 +16,7 @@ const AdminDashboard = ({ adminPassword }) => {
     const fetchOrders = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('http://localhost:5000/api/files/orders', {
+            const res = await api.get('/api/files/orders', {
                 headers: { 'x-admin-password': adminPassword }
             });
             setOrders(res.data);
@@ -29,7 +29,7 @@ const AdminDashboard = ({ adminPassword }) => {
 
     const handleApprove = async (orderId) => {
         try {
-            await axios.post('http://localhost:5000/api/files/approve',
+            await api.post('/api/files/approve',
                 { orderId },
                 { headers: { 'x-admin-password': adminPassword } }
             );

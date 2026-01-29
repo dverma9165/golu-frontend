@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Register = () => {
@@ -17,7 +17,7 @@ const Register = () => {
         e.preventDefault();
         setError('');
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/register', { name, email, phone, password });
+            const res = await api.post('/api/auth/register', { name, email, phone, password });
             setUserId(res.data.userId);
             setStep(2); // Move to OTP step
         } catch (err) {
@@ -29,7 +29,7 @@ const Register = () => {
         e.preventDefault();
         setError('');
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/verify-otp', { userId, otp });
+            const res = await api.post('/api/auth/verify-otp', { userId, otp });
             localStorage.setItem('token', res.data.token);
             // navigate('/login'); // Or directly to dashboard if token is stored and app state updates
             // For now, let's redirect to login for cleanliness or home if App handles token immediately
