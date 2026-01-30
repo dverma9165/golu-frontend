@@ -42,6 +42,21 @@ const AdminDashboard = ({ adminPassword }) => {
         }
     };
 
+    const handleReject = async (orderId) => {
+        if (!confirm("Are you sure you want to reject this order?")) return;
+        try {
+            await api.post('/api/files/reject',
+                { orderId },
+                { headers: { 'x-admin-password': adminPassword } }
+            );
+            // Update local state
+            setOrders(orders.map(o => o._id === orderId ? { ...o, status: 'Rejected' } : o));
+        } catch (err) {
+            console.error(err);
+            alert("Failed to reject");
+        }
+    };
+
     const handleUploadComplete = () => {
         alert("Product Uploaded Successfully!");
         setActiveTab('orders'); // Switch back to see if logic needed, or just stay
@@ -81,13 +96,13 @@ const AdminDashboard = ({ adminPassword }) => {
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">UTR</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[120px]">Date</th>
+                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[150px]">Customer</th>
+                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[150px]">UTR</th>
+                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[150px]">Product</th>
+                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[100px]">Amount</th>
+                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[100px]">Status</th>
+                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[100px]">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
@@ -101,8 +116,8 @@ const AdminDashboard = ({ adminPassword }) => {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                             {order.customerName}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">
-                                            <div>{order.utr}</div>
+                                        <td className="px-6 py-4 text-sm font-mono text-gray-600 max-w-[200px]">
+                                            <div className="truncate" title={order.utr}>{order.utr}</div>
                                             {order.paymentScreenshot && order.paymentScreenshot.viewLink && (
                                                 <a
                                                     href={order.paymentScreenshot.viewLink}
@@ -114,8 +129,10 @@ const AdminDashboard = ({ adminPassword }) => {
                                                 </a>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                            {order.product ? order.product.title : <span className="text-red-400">Deleted</span>}
+                                        <td className="px-6 py-4 text-sm text-gray-600 max-w-[200px]">
+                                            <div className="truncate" title={order.product ? order.product.title : 'Deleted'}>
+                                                {order.product ? order.product.title : <span className="text-red-400">Deleted</span>}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
                                             ₹{order.amount}
@@ -126,13 +143,22 @@ const AdminDashboard = ({ adminPassword }) => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+
                                             {order.status === 'Pending' && (
-                                                <button
-                                                    onClick={() => handleApprove(order._id)}
-                                                    className="text-white bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-xs"
-                                                >
-                                                    Approve
-                                                </button>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => handleApprove(order._id)}
+                                                        className="text-white bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-xs transition-colors"
+                                                    >
+                                                        Approve
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleReject(order._id)} // Assume handleReject exists
+                                                        className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-xs transition-colors"
+                                                    >
+                                                        Reject
+                                                    </button>
+                                                </div>
                                             )}
                                         </td>
                                     </tr>

@@ -12,6 +12,8 @@ import Footer from './components/Footer';
 
 import { subscribeUser } from './utils/push';
 
+
+
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
@@ -26,16 +28,44 @@ function App() {
     }
   }, [token]);
 
+  // Check Admin Persistence on Load
+  useEffect(() => {
+    const storedAdminPass = localStorage.getItem('adminPassword');
+    const storedAdminTime = localStorage.getItem('adminLoginTime');
+
+    if (storedAdminPass && storedAdminTime) {
+      const now = new Date().getTime();
+      const loginTime = parseInt(storedAdminTime, 10);
+      const hoursPassed = (now - loginTime) / (1000 * 60 * 60);
+
+      if (hoursPassed < 24) {
+        setIsAdmin(true);
+        setAdminPassword(storedAdminPass);
+      } else {
+        // Expired
+        localStorage.removeItem('adminPassword');
+        localStorage.removeItem('adminLoginTime');
+      }
+    }
+  }, []);
+
   const handleAdminLogin = (password) => {
     setAdminPassword(password);
     setIsAdmin(true);
     setIsLoginOpen(false);
+
+    // Persist
+    localStorage.setItem('adminPassword', password);
+    localStorage.setItem('adminLoginTime', new Date().getTime().toString());
+
     subscribeUser('admin', password);
   };
 
   const handleAdminLogout = () => {
     setIsAdmin(false);
     setAdminPassword('');
+    localStorage.removeItem('adminPassword');
+    localStorage.removeItem('adminLoginTime');
   };
 
   const handleUserLogout = () => {
@@ -44,8 +74,26 @@ function App() {
   }
 
   return (
+    <AppContent
+      token={token}
+      setToken={setToken}
+      isAdmin={isAdmin}
+      setIsAdmin={setIsAdmin}
+      isLoginOpen={isLoginOpen}
+      setIsLoginOpen={setIsLoginOpen}
+      handleUserLogout={handleUserLogout}
+      handleAdminLogout={handleAdminLogout}
+      handleAdminLogin={handleAdminLogin}
+      adminPassword={adminPassword}
+      setAdminPassword={setAdminPassword}
+    />
+  );
+}
+
+function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLoginOpen, handleUserLogout, handleAdminLogout, handleAdminLogin, adminPassword }) {
+  return (
     <Router>
-      <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 flex flex-col">
+      <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 flex flex-col transition-colors duration-300">
 
         {/* Abstract Background Shapes */}
         <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
@@ -76,30 +124,32 @@ function App() {
                 {/* Navigation Links can go here */}
               </div>
 
-              <div className="flex items-center gap-3 sm:gap-5">
+              <div className="flex items-center gap-4 sm:gap-6">
+
+
                 {/* Cart Link (Protected) */}
                 {token && (
-                  <Link to="/cart" className="relative group p-2 rounded-full hover:bg-slate-100 transition-colors">
+                  <Link to="/cart" className="relative group p-2 rounded-full hover:bg-slate-100 transition-colors" title="View Cart">
                     <FaShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-600 group-hover:text-indigo-600 transition-colors" />
                     {/* Add Badge here if needed */}
                   </Link>
                 )}
 
-                <div className="h-6 sm:h-8 w-px bg-slate-200 mx-1"></div>
+                <div className="h-8 w-px bg-slate-200 mx-2 hidden sm:block"></div>
 
                 {/* Customer Auth */}
                 {!token ? (
                   <Link
                     to="/login"
-                    className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-slate-900 text-white text-xs sm:text-sm font-semibold hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+                    className="px-6 py-2.5 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
                   >
                     Login
                   </Link>
                 ) : (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-4">
                     <button
                       onClick={handleUserLogout}
-                      className="text-xs sm:text-sm font-semibold text-slate-500 hover:text-red-600 transition-colors px-2 sm:px-3 py-2 rounded-lg hover:bg-red-50"
+                      className="text-sm font-medium text-slate-500 hover:text-red-600 transition-colors hover:bg-red-50 px-3 py-1.5 rounded-lg"
                     >
                       Logout
                     </button>
@@ -113,21 +163,22 @@ function App() {
                     className="text-slate-400 hover:text-indigo-600 transition-colors p-2"
                     title="Admin Access"
                   >
-                    <FaUserShield className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <FaUserShield className="w-5 h-5" />
                   </button>
                 ) : (
-                  <div className="flex items-center gap-2 sm:gap-3 bg-indigo-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-indigo-100">
+                  <div className="flex items-center gap-3">
                     <Link
                       to="/admin"
-                      className="text-[10px] sm:text-xs font-bold text-indigo-700 hover:underline whitespace-nowrap"
+                      className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-full text-xs font-bold hover:bg-indigo-700 hover:shadow-md transition-all duration-200"
                     >
-                      ADMIN PANEL
+                      ADMIN PANEL <FaRocket className="w-3 h-3" />
                     </Link>
                     <button
                       onClick={handleAdminLogout}
-                      className="text-indigo-400 hover:text-red-500 transition-colors"
+                      className="text-slate-400 hover:text-red-500 transition-colors p-2"
+                      title="Admin Logout"
                     >
-                      <FaSignOutAlt className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                      <FaSignOutAlt className="w-4 h-4" />
                     </button>
                   </div>
                 )}

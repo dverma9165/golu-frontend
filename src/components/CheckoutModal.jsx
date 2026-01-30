@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaTimes, FaCheck, FaSpinner, FaQrcode } from 'react-icons/fa';
 import api from '../services/api';
 
-const CheckoutModal = ({ isOpen, onClose, product, onSuccess }) => {
+const CheckoutModal = ({ isOpen, onClose, product, totalAmount, cartItems, onSuccess }) => {
     const [customerName, setCustomerName] = useState('');
     const [utr, setUtr] = useState('');
     const [loading, setLoading] = useState(false);
@@ -11,22 +11,37 @@ const CheckoutModal = ({ isOpen, onClose, product, onSuccess }) => {
     const [orderParams, setOrderParams] = useState(null);
     const [screenshot, setScreenshot] = useState(null);
 
-    if (!isOpen || !product) return null;
+    // Determine amount to pay
+    const amountToPay = totalAmount || (product ? product.price : 0);
+
+    if (!isOpen) return null;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("Checkout Submit - Bulk Support v2");
         setLoading(true);
         setError('');
 
         try {
             const token = localStorage.getItem('token');
             const formData = new FormData();
-            formData.append('productId', product._id);
+
+            // Handle single product or cart
+            if (product) {
+                formData.append('productId', product._id);
+            } else if (cartItems && cartItems.length > 0) {
+                // Suggesting a way to send cart items, possibly as a JSON string if backend supports
+                // or maybe the backend just creates an order from the user's current cart session
+                formData.append('isCartOrder', 'true');
+                formData.append('cartItems', JSON.stringify(cartItems.map(item => item.product._id)));
+            }
+
             formData.append('customerName', customerName);
             formData.append('utr', utr);
             if (screenshot) {
                 formData.append('paymentScreenshot', screenshot);
             }
+            formData.append('amount', amountToPay);
 
             // Include Token Header
             const res = await api.post('/api/files/order', formData, {
@@ -50,18 +65,19 @@ const CheckoutModal = ({ isOpen, onClose, product, onSuccess }) => {
         setSubmitted(false);
         setCustomerName('');
         setUtr('');
+        setScreenshot(null);
         onClose();
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div
                 className="fixed inset-0 bg-black bg-opacity-70 transition-opacity"
                 onClick={resetAndClose}
             ></div>
 
             <div
-                className="bg-white rounded-xl shadow-2xl z-[110] w-full max-w-md overflow-hidden relative"
+                className="bg-white rounded-xl shadow-2xl z-[60] w-full max-w-md overflow-hidden relative"
                 onClick={e => e.stopPropagation()}
             >
                 <div className="bg-gray-50 px-6 py-4 border-b flex justify-between items-center">
@@ -75,11 +91,20 @@ const CheckoutModal = ({ isOpen, onClose, product, onSuccess }) => {
                     {!submitted ? (
                         <>
                             <div className="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-100 flex flex-col items-center">
-                                <span className="text-sm text-blue-800 font-semibold mb-2">Scan & Pay ₹{product.price}</span>
+                                {/* Product Image Preview */}
+                                {product && product.thumbnail?.viewLink && (
+                                    <div className="w-24 h-24 mb-4 rounded-lg overflow-hidden bg-white shadow-sm border border-gray-200">
+                                        <img
+                                            src={`https://lh3.googleusercontent.com/d/${product.thumbnail.googleDriveId}`}
+                                            alt={product.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                )}
+                                <span className="text-sm text-blue-800 font-semibold mb-2">Scan & Pay ₹{amountToPay}</span>
                                 <div className="bg-white p-2 rounded shadow flex items-center justify-center">
                                     <img src="/phonepe_qr.png?v=4" alt="QR Code" className="w-48 h-48 object-contain" />
                                 </div>
-                                <p className="text-xs text-gray-500 mt-2">UPI ID: 7648866779@ybl</p>
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
@@ -106,7 +131,7 @@ const CheckoutModal = ({ isOpen, onClose, product, onSuccess }) => {
                                     <input
                                         type="file" accept="image/*"
                                         onChange={e => setScreenshot(e.target.files[0])}
-                                        className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                        className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
                                     />
                                 </div>
 
@@ -127,7 +152,7 @@ const CheckoutModal = ({ isOpen, onClose, product, onSuccess }) => {
                             </div>
                             <h4 className="text-xl font-bold text-gray-900 mb-2">Order Submitted!</h4>
                             <p className="text-gray-500 mb-4">Wait for Admin Approval to Download.</p>
-                            <button onClick={resetAndClose} className="bg-gray-900 text-white px-6 py-2 rounded-lg">Close</button>
+                            <button onClick={resetAndClose} className="bg-gray-900 text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition">Close</button>
                         </div>
                     )}
                 </div>

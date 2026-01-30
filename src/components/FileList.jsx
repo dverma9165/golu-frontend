@@ -61,7 +61,7 @@ const FileList = ({ refreshTrigger }) => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Latest Designs</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 font-display">Latest Designs</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {files.map((file, index) => {

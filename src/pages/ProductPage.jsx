@@ -180,7 +180,6 @@ const ProductPage = ({ token }) => {
                                                 navigate('/cart');
                                             } catch (err) {
                                                 console.error(err);
-                                                // Even if error (e.g. already in cart), go to cart
                                                 navigate('/cart');
                                             }
                                         }}

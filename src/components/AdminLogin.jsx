@@ -21,7 +21,7 @@ const AdminLogin = ({ isOpen, onClose, onLogin }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center z-50">
-      <div className="relative bg-white rounded-lg shadow-xl p-8 w-96">
+      <div className="relative bg-white rounded-lg shadow-xl p-8 w-96 transition-colors duration-300">
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
           <FaTimes />
         </button>
@@ -37,7 +37,7 @@ const AdminLogin = ({ isOpen, onClose, onLogin }) => {
           <div className="mb-4">
             <input
               type="password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 bg-white text-gray-900 transition-colors"
               placeholder="Admin Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
