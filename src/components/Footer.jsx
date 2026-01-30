@@ -20,7 +20,7 @@ const Footer = () => {
                             </div>
                         </Link>
                         <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                            Elevating your brand with premium digital assets and professional print services. Quality you can trust, designs that inspire.
+                            Elevating your brand with premium digital assets and professional print services. Quality you can trust, designs that inspire...
                         </p>
                         <div className="flex gap-4">
                             <a href="https://www.youtube.com/@DikshaDesignPrint" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all duration-300">
