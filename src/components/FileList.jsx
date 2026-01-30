@@ -63,7 +63,7 @@ const FileList = ({ refreshTrigger }) => {
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Latest Designs</h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {files.map((file, index) => {
           const isLastElement = files.length === index + 1;
           const thumbnailLink = file.thumbnail?.viewLink
@@ -74,46 +74,61 @@ const FileList = ({ refreshTrigger }) => {
             <div
               ref={isLastElement ? lastFileElementRef : null}
               key={file._id}
-              className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden border border-gray-100 flex flex-col"
+              className="group bg-white rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-slate-100 flex flex-col relative"
             >
-              <div className="h-48 bg-gray-50 flex items-center justify-center relative overflow-hidden group">
+              {/* Image Container */}
+              <div className="h-64 bg-slate-100 relative overflow-hidden">
                 {thumbnailLink ? (
                   <img
                     src={thumbnailLink}
                     alt={file.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     loading="lazy"
                   />
                 ) : (
-                  <div className="transform transition-transform duration-300 group-hover:scale-110">
+                  <div className="w-full h-full flex items-center justify-center bg-slate-50 group-hover:scale-105 transition-transform duration-500">
                     {getFileIcon(file.thumbnail?.mimeType || file.mimeType)}
                   </div>
                 )}
 
-                {/* Overlay with Link */}
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                {/* Floating Action Button (Glassmorphism) */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0">
                   <Link
                     to={`/product/${file._id}`}
-                    className="bg-white text-gray-900 rounded-full p-3 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-blue-50"
-                    title="View Details"
+                    className="glass text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-white hover:text-indigo-600 transition-all duration-300 shadow-lg backdrop-blur-md"
                   >
-                    <FaEye className="w-5 h-5" />
+                    <FaEye /> View Details
                   </Link>
                 </div>
               </div>
 
-              <div className="p-4 flex-1 flex flex-col justify-between">
+              {/* Content Area */}
+              <div className="p-6 flex-1 flex flex-col justify-between bg-white relative z-10">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-1 truncate" title={file.title || file.originalName}>
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-[10px] font-bold tracking-wider text-indigo-500 uppercase bg-indigo-50 px-2 py-1 rounded-md">
+                      {file.fileType || 'Design'}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-2 leading-tight group-hover:text-indigo-600 transition-colors line-clamp-2" title={file.title || file.originalName}>
                     {file.title || file.originalName || 'Untitled'}
                   </h3>
-                  <p className="text-sm text-gray-500 mb-2 uppercase tracking-wider font-medium">
-                    {file.fileType || 'Design'}
-                  </p>
                 </div>
 
-                <div className="flex items-center justify-between mt-2 pt-3 border-t">
-                  <span className="font-bold text-blue-600 text-lg">₹{file.price || 0}</span>
+                <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-50">
+                  <div className="flex flex-col">
+                    <span className="text-xs text-slate-400 font-medium uppercase">Price</span>
+                    <span className="font-extrabold text-2xl text-slate-900">₹{file.price || 0}</span>
+                  </div>
+                  <Link
+                    to={`/product/${file._id}`}
+                    className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-600 hover:bg-indigo-600 hover:text-white transition-all duration-300 group-hover:rotate-45"
+                  >
+                    <FaEye />
+                  </Link>
                 </div>
               </div>
             </div>

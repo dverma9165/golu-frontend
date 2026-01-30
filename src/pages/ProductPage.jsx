@@ -90,62 +90,118 @@ const ProductPage = ({ token }) => {
     return (
         <div className="bg-gray-50 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
-                <Link to="/" className="text-gray-500 hover:text-gray-900 mb-8 inline-block">&larr; Back to Shop</Link>
+                <Link to="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 mb-8 font-medium transition-colors bg-white px-4 py-2 rounded-full shadow-sm hover:shadow-md">
+                    &larr; Back to Shop
+                </Link>
 
-                <div className="bg-white rounded-2xl shadow-xl overflow-hidden md:flex">
-                    <div className="md:w-1/2 p-4 bg-gray-100 flex items-center justify-center">
-                        {product.thumbnail && product.thumbnail.viewLink && (
+                <div className="bg-white rounded-3xl shadow-2xl overflow-hidden md:flex min-h-[600px] border border-slate-100">
+                    {/* Left: Image Section */}
+                    <div className="md:w-1/2 bg-slate-100 relative group overflow-hidden flex items-center justify-center p-8">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-white via-slate-100 to-slate-200 opacity-70"></div>
+
+                        {/* Decorative Circle */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                        {product.thumbnail && product.thumbnail.viewLink ? (
                             <img
                                 src={`https://lh3.googleusercontent.com/d/${product.thumbnail.googleDriveId}`}
                                 alt={product.title}
-                                className="w-full h-full object-contain rounded-lg"
+                                className="relative z-10 w-full max-h-[500px] object-contain drop-shadow-2xl transition-transform duration-700 hover:scale-105"
                             />
+                        ) : (
+                            <div className="relative z-10 flex flex-col items-center justify-center text-slate-300">
+                                <FaDownload className="w-24 h-24 mb-4 opacity-50" />
+                                <span className="text-lg font-medium">No Preview Available</span>
+                            </div>
                         )}
                     </div>
 
-                    <div className="md:w-1/2 p-8 lg:p-12 flex flex-col justify-between">
+                    {/* Right: Details Section */}
+                    <div className="md:w-1/2 p-10 lg:p-14 flex flex-col justify-between bg-white relative">
                         <div>
-                            <h1 className="text-3xl font-extrabold text-gray-900 mb-2">{product.title}</h1>
-                            <span className="text-4xl font-bold text-blue-600">₹{product.price}</span>
+                            <div className="flex items-center gap-3 mb-4">
+                                <span className="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg text-xs font-bold tracking-wider uppercase">
+                                    {product.fileType || 'Digital Asset'}
+                                </span>
+                                <span className="flex items-center gap-1 text-green-600 text-xs font-bold bg-green-50 px-3 py-1 rounded-lg">
+                                    <FaShieldAlt className="w-3 h-3" /> 100% Secure
+                                </span>
+                            </div>
 
-                            <div className="mt-6 border-t pt-4">
-                                <p className="text-gray-600">{product.description || "No description."}</p>
+                            <h1 className="text-4xl lg:text-5xl font-extrabold text-slate-900 mb-4 leading-tight font-display">
+                                {product.title}
+                            </h1>
+
+                            <div className="flex items-center gap-4 mb-8">
+                                <span className="text-5xl font-bold text-indigo-600">₹{product.price}</span>
+                                <span className="text-slate-400 text-lg line-through decoration-slate-300 decoration-2">₹{Math.round(product.price * 1.5)}</span>
+                            </div>
+
+                            <div className="border-t border-slate-100 pt-6">
+                                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest mb-3">Description</h3>
+                                <p className="text-slate-600 leading-relaxed text-lg">
+                                    {product.description || "Top tier design ready for use. High resolution and editable files included."}
+                                </p>
                             </div>
                         </div>
 
-                        <div className="mt-8 space-y-4">
+                        <div className="mt-10 space-y-4">
                             {purchaseStatus === 'approved' ? (
-                                <div className="bg-green-50 p-4 rounded-lg flex flex-col gap-3">
-                                    <div className="flex items-center gap-2 text-green-700 font-bold">
-                                        <FaCheckCircle /> Purchased & Approved
+                                <div className="bg-green-50 p-6 rounded-2xl border border-green-100">
+                                    <div className="flex items-center gap-3 text-green-800 font-bold text-lg mb-4">
+                                        <FaCheckCircle className="w-6 h-6" />
+                                        <span>Purchase Verified</span>
                                     </div>
                                     <button
                                         onClick={handleDownload}
-                                        className="bg-green-600 text-white rounded-xl py-3 font-bold hover:bg-green-700 transition flex items-center justify-center gap-2 w-full"
+                                        className="w-full bg-green-600 text-white rounded-xl py-4 font-bold text-lg hover:bg-green-700 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3"
                                     >
-                                        <FaDownload /> Download File
+                                        <FaDownload /> Download Files Now
                                     </button>
                                 </div>
                             ) : purchaseStatus === 'pending' ? (
-                                <div className="bg-yellow-50 p-4 rounded-lg flex items-center gap-2 text-yellow-700 font-bold">
-                                    <FaLock /> Payment Pending Approval
+                                <div className="bg-amber-50 p-6 rounded-2xl border border-amber-100 flex items-center gap-3 text-amber-800 font-bold text-lg">
+                                    <FaLock className="w-6 h-6 animate-pulse" />
+                                    <span>Payment Processing...</span>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <button
-                                        onClick={() => setIsCheckoutOpen(true)}
-                                        className="bg-blue-600 text-white rounded-xl py-3 font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2"
+                                        onClick={async () => {
+                                            if (!token) {
+                                                navigate('/login');
+                                                return;
+                                            }
+                                            try {
+                                                await api.post('/api/auth/cart',
+                                                    { productId: product._id },
+                                                    { headers: { 'x-auth-token': token } }
+                                                );
+                                                navigate('/cart');
+                                            } catch (err) {
+                                                console.error(err);
+                                                // Even if error (e.g. already in cart), go to cart
+                                                navigate('/cart');
+                                            }
+                                        }}
+                                        className="bg-indigo-600 text-white rounded-xl py-4 font-bold text-lg hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-200 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
                                     >
                                         Buy Now
                                     </button>
                                     <button
                                         onClick={handleAddToCart}
-                                        className="bg-orange-500 text-white rounded-xl py-3 font-bold hover:bg-orange-600 transition flex items-center justify-center gap-2"
+                                        className="bg-white text-slate-700 border-2 border-slate-200 rounded-xl py-4 font-bold text-lg hover:border-indigo-600 hover:text-indigo-600 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
                                     >
                                         <FaCartPlus /> Add to Cart
                                     </button>
                                 </div>
                             )}
+
+                            <div className="text-center mt-6">
+                                <p className="text-xs text-slate-400">
+                                    Secured by <span className="font-bold text-slate-500">Razorpay</span> • Instant Delivery
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
