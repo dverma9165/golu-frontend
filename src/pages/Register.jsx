@@ -21,7 +21,9 @@ const Register = () => {
             setUserId(res.data.userId);
             setStep(2); // Move to OTP step
         } catch (err) {
-            setError(err.response?.data?.msg || 'Registration failed');
+            console.error("Registration Error:", err);
+            const errorMsg = err.response?.data?.msg || err.message || 'Registration failed';
+            setError(errorMsg);
         }
     };
 

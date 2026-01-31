@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { FaUserShield, FaSignOutAlt, FaRocket, FaShoppingCart, FaUser } from 'react-icons/fa';
+import { FaUserShield, FaSignOutAlt, FaRocket, FaShoppingCart, FaUser, FaBars, FaTimes } from 'react-icons/fa';
 import FileList from './components/FileList';
 import AdminLogin from './components/AdminLogin';
 import ProductPage from './pages/ProductPage';
@@ -91,6 +91,7 @@ function App() {
 }
 
 function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLoginOpen, handleUserLogout, handleAdminLogout, handleAdminLogin, adminPassword }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   return (
     <Router>
       <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 flex flex-col transition-colors duration-300">
@@ -183,8 +184,76 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                   </div>
                 )}
               </div>
+
+              {/* Mobile Menu Button */}
+              <div className="md:hidden flex items-center">
+                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-slate-600 hover:text-indigo-600 focus:outline-none p-2">
+                  {isMobileMenuOpen ? <FaTimes className="w-6 h-6" /> : <FaBars className="w-6 h-6" />}
+                </button>
+              </div>
             </div>
           </div>
+
+          {/* Mobile Menu Overlay */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden absolute top-20 left-0 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-xl py-4 px-4 flex flex-col gap-4 animate-fade-in-down z-40">
+              {/* Mobile Navigation Links */}
+
+              {/* Cart Link (Mobile) */}
+              {token && (
+                <Link to="/cart" className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-100 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+                  <FaShoppingCart className="w-5 h-5 text-slate-600" />
+                  <span className="font-medium text-slate-700">Cart</span>
+                </Link>
+              )}
+
+              <div className="h-px bg-slate-200 my-1"></div>
+
+              {/* Customer Auth (Mobile) */}
+              {!token ? (
+                <Link
+                  to="/login"
+                  className="flex justify-center w-full px-6 py-2.5 rounded-lg bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition-all"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              ) : (
+                <button
+                  onClick={() => { handleUserLogout(); setIsMobileMenuOpen(false); }}
+                  className="flex items-center gap-2 w-full text-left text-sm font-medium text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors"
+                >
+                  <FaSignOutAlt className="w-4 h-4" /> Logout
+                </button>
+              )}
+
+              {/* Admin Auth (Mobile) */}
+              {!isAdmin ? (
+                <button
+                  onClick={() => { setIsLoginOpen(true); setIsMobileMenuOpen(false); }}
+                  className="flex items-center gap-2 w-full text-left text-slate-500 hover:text-indigo-600 p-2 rounded-lg transition-colors"
+                >
+                  <FaUserShield className="w-5 h-5" /> Admin Access
+                </button>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <Link
+                    to="/admin"
+                    className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-indigo-700 transition-all justify-center"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    ADMIN PANEL <FaRocket className="w-3 h-3" />
+                  </Link>
+                  <button
+                    onClick={() => { handleAdminLogout(); setIsMobileMenuOpen(false); }}
+                    className="flex items-center gap-2 w-full text-left text-slate-400 hover:text-red-500 p-2 rounded-lg transition-colors"
+                  >
+                    <FaSignOutAlt className="w-4 h-4" /> Admin Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </nav>
 
         {/* Spacer for Fixed Navbar */}
@@ -218,8 +287,8 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
           onClose={() => setIsLoginOpen(false)}
           onLogin={handleAdminLogin}
         />
-      </div>
-    </Router>
+      </div >
+    </Router >
   );
 }
 

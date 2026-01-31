@@ -110,13 +110,13 @@ const AdminDashboard = ({ adminPassword }) => {
                                     <tr><td colSpan="7" className="text-center py-4">Loading...</td></tr>
                                 ) : orders.map((order) => (
                                     <tr key={order._id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500">
                                             {new Date(order.createdAt).toLocaleDateString()}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                             {order.customerName}
                                         </td>
-                                        <td className="px-6 py-4 text-sm font-mono text-gray-600 max-w-[200px]">
+                                        <td className="px-2 py-2 md:px-6 md:py-4 text-sm font-mono text-gray-600 max-w-[200px]">
                                             <div className="truncate" title={order.utr}>{order.utr}</div>
                                             {order.paymentScreenshot && order.paymentScreenshot.viewLink && (
                                                 <a
@@ -129,20 +129,20 @@ const AdminDashboard = ({ adminPassword }) => {
                                                 </a>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600 max-w-[200px]">
+                                        <td className="px-2 py-2 md:px-6 md:py-4 text-sm text-gray-600 max-w-[200px]">
                                             <div className="truncate" title={order.product ? order.product.title : 'Deleted'}>
                                                 {order.product ? order.product.title : <span className="text-red-400">Deleted</span>}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
+                                        <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
                                             ₹{order.amount}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap">
                                             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${order.status === 'Approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                                                 {order.status}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm font-medium">
 
                                             {order.status === 'Pending' && (
                                                 <div className="flex gap-2">
