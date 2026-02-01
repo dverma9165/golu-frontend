@@ -299,7 +299,7 @@ const AdminDashboard = ({ adminPassword }) => {
                                         </td>
                                         <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm font-medium text-gray-900 block md:table-cell flex justify-between md:block">
                                             <span className="font-bold text-gray-700 md:hidden">Customer:</span>
-                                            {order.customerName}
+                                            {order.customerName} //l
                                         </td>
                                         <td className="px-2 py-2 md:px-6 md:py-4 text-sm font-mono text-gray-600 max-w-[200px] block md:table-cell flex justify-between md:block items-center">
                                             <span className="font-bold text-gray-700 md:hidden mr-2">UTR:</span>
