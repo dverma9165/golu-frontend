@@ -7,38 +7,30 @@ import CheckoutModal from '../components/CheckoutModal';
 
 const CartPage = ({ token }) => {
     const [cart, setCart] = useState([]);
-    const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
     useEffect(() => {
         if (token) {
-            fetchCart();
-            fetchOrders();
+            fetchCart(page);
         }
-    }, [token]);
+    }, [token, page]);
 
-    const fetchCart = async () => {
+    const fetchCart = async (pageNum = 1) => {
         try {
-            const res = await api.get('/api/auth/cart', {
+            const res = await api.get(`/api/auth/cart?page=${pageNum}&limit=5`, {
                 headers: { 'x-auth-token': token }
             });
             setCart(res.data.cart || []);
+            setTotalPages(res.data.totalPages || 1);
+            setTotalItems(res.data.totalItems || 0);
         } catch (err) {
             console.error(err);
         } finally {
             setLoading(false);
-        }
-    };
-
-    const fetchOrders = async () => {
-        try {
-            const res = await api.get('/api/files/my-orders', {
-                headers: { 'x-auth-token': token }
-            });
-            setOrders(res.data || []);
-        } catch (err) {
-            console.error(err);
         }
     };
 
@@ -92,7 +84,7 @@ const CartPage = ({ token }) => {
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-            {/* --- CART SECTION --- */}
+            {/* --- PAGINATED CART SECTION --- */}
             <div className="mb-16">
                 <div className="flex items-center gap-4 mb-8">
                     <div className="bg-indigo-100 p-3 rounded-xl">
@@ -100,7 +92,7 @@ const CartPage = ({ token }) => {
                     </div>
                     <h1 className="text-3xl font-bold text-slate-900 font-display">Your Cart</h1>
                     <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-sm font-medium">
-                        {cart.length} {cart.length === 1 ? 'Item' : 'Items'}
+                        {totalItems} {totalItems === 1 ? 'Item' : 'Items'}
                     </span>
                 </div>
 
@@ -165,6 +157,29 @@ const CartPage = ({ token }) => {
                                     </div>
                                 </div>
                             ))}
+
+                            {/* Pagination Controls */}
+                            {totalPages > 1 && (
+                                <div className="flex justify-center items-center gap-4 pt-6">
+                                    <button
+                                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                                        disabled={page === 1}
+                                        className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Previous
+                                    </button>
+                                    <span className="text-sm text-gray-600">
+                                        Page {page} of {totalPages}
+                                    </span>
+                                    <button
+                                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                        disabled={page === totalPages}
+                                        className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         {/* Order Summary */}
@@ -204,46 +219,6 @@ const CartPage = ({ token }) => {
                     </div>
                 )}
             </div>
-
-            {/* --- MY ORDERS / DOWNLOADS SECTION --- */}
-            {orders.length > 0 && (
-                <div className="mt-16 border-t pt-10">
-                    <h2 className="text-2xl font-bold text-slate-900 font-display mb-6">My Downloads & Orders</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {orders.map((order) => (
-                            <div key={order._id} className="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-lg transition-all">
-                                <div className="flex justify-between items-start mb-4">
-                                    <div>
-                                        <p className="text-xs text-slate-500 font-mono">Order #{order.utr.slice(-6)}</p>
-                                        <h3 className="font-bold text-slate-800 mt-1 line-clamp-1">{order.product?.title || 'Product'}</h3>
-                                    </div>
-                                    <span className={`px-2 py-1 rounded text-xs font-bold ${order.status === 'Approved' ? 'bg-green-100 text-green-700' :
-                                        order.status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
-                                        }`}>
-                                        {order.status}
-                                    </span>
-                                </div>
-
-                                {order.status === 'Approved' ? (
-                                    <a
-                                        href={order.product?.sourceFile?.downloadLink} target="_blank" rel="noopener noreferrer"
-                                        className="block w-full text-center bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
-                                    >
-                                        Download File
-                                    </a>
-                                ) : (
-                                    <button disabled className="block w-full text-center bg-slate-100 text-slate-400 py-2 rounded-lg font-semibold cursor-not-allowed">
-                                        Download Not Ready
-                                    </button>
-                                )}
-                                <p className="text-center text-[10px] text-slate-400 mt-2">
-                                    {order.status === 'Approved' ? 'Valid for 72 hours' : 'Waiting for Admin Approval'}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
 
             <CheckoutModal
                 isOpen={isCheckoutOpen}

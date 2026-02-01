@@ -90,8 +90,11 @@ function App() {
   );
 }
 
+import MyOrdersPage from './pages/MyOrdersPage';
+
 function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLoginOpen, handleUserLogout, handleAdminLogout, handleAdminLogin, adminPassword }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <Router>
       <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 flex flex-col transition-colors duration-300">
@@ -125,7 +128,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                 {/* Navigation Links can go here */}
               </div>
 
-              <div className="flex items-center gap-4 sm:gap-6">
+              <div className="hidden md:flex items-center gap-4 sm:gap-6">
 
 
                 {/* Cart Link (Protected) */}
@@ -138,7 +141,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
 
                 <div className="h-8 w-px bg-slate-200 mx-2 hidden sm:block"></div>
 
-                {/* Customer Auth */}
+                {/* Customer Auth & Profile */}
                 {!token ? (
                   <Link
                     to="/login"
@@ -147,14 +150,15 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                     Login
                   </Link>
                 ) : (
-                  <div className="flex items-center gap-4">
-                    <button
-                      onClick={handleUserLogout}
-                      className="text-sm font-medium text-slate-500 hover:text-red-600 transition-colors hover:bg-red-50 px-3 py-1.5 rounded-lg"
-                    >
-                      Logout
-                    </button>
-                  </div>
+                  <Link
+                    to="/my-orders"
+                    className="flex items-center gap-2 p-2 rounded-full hover:bg-slate-100 transition-colors focus:outline-none"
+                    title="My Downloads & Orders"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 border border-slate-300">
+                      <FaUser className="w-4 h-4" />
+                    </div>
+                  </Link>
                 )}
 
                 {/* Admin Auth */}
@@ -219,12 +223,25 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                   Login
                 </Link>
               ) : (
-                <button
-                  onClick={() => { handleUserLogout(); setIsMobileMenuOpen(false); }}
-                  className="flex items-center gap-2 w-full text-left text-sm font-medium text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors"
-                >
-                  <FaSignOutAlt className="w-4 h-4" /> Logout
-                </button>
+                <>
+                  <Link
+                    to="/my-orders"
+                    className="flex items-center gap-2 w-full text-left p-2 rounded-lg hover:bg-slate-100 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 text-xs">
+                      <FaUser />
+                    </div>
+                    <span className="font-medium text-slate-700">My Orders</span>
+                  </Link>
+
+                  <button
+                    onClick={() => { handleUserLogout(); setIsMobileMenuOpen(false); }}
+                    className="flex items-center gap-2 w-full text-left text-sm font-medium text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors"
+                  >
+                    <FaSignOutAlt className="w-4 h-4" /> Logout
+                  </button>
+                </>
               )}
 
               {/* Admin Auth (Mobile) */}
@@ -272,6 +289,9 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
 
           {/* Protected Cart */}
           <Route path="/cart" element={token ? <CartPage token={token} /> : <Navigate to="/login" replace />} />
+
+          {/* Protected My Orders */}
+          <Route path="/my-orders" element={token ? <MyOrdersPage /> : <Navigate to="/login" replace />} />
 
           {/* Admin Route */}
           <Route

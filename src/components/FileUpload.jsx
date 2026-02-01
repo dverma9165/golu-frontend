@@ -24,6 +24,11 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
       return;
     }
 
+    if (salePrice && parseFloat(salePrice) >= parseFloat(price)) {
+      setMessage('Sale Price must be less than Regular Price.');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('thumbnail', thumbnail);
     formData.append('sourceFile', sourceFile);
@@ -86,7 +91,9 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
                 <option>CDR</option>
                 <option>PSD</option>
                 <option>AI</option>
+                <option>EPS</option>
                 <option>PDF</option>
+                <option>TIFF</option>
                 <option>ZIP</option>
               </select>
             </div>
@@ -97,12 +104,36 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Sale Price (Optional)</label>
-              <input type="number" value={salePrice} onChange={e => setSalePrice(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500" placeholder="0" />
+              <input
+                type="number"
+                value={salePrice}
+                onChange={e => setSalePrice(e.target.value)}
+                className={`mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 ${parseFloat(salePrice) >= parseFloat(price) ? 'border-red-300 focus:border-red-500' : 'border-gray-300'}`}
+                placeholder="0"
+              />
+              {parseFloat(salePrice) >= parseFloat(price) && (
+                <p className="text-xs text-red-500 mt-1">Sale price must be less than regular price</p>
+              )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Version</label>
-              <input type="text" value={version} onChange={e => setVersion(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. X5" />
+              <label className="block text-sm font-medium text-gray-700">
+                {fileType === 'CDR' ? 'CorelDRAW Version' : 'Version'}
+              </label>
+              {fileType === 'CDR' ? (
+                <select
+                  value={version}
+                  onChange={e => setVersion(e.target.value)}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select Version</option>
+                  {['X3', 'X4', 'X5', 'X6', 'X7', 'X8', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'].map(v => (
+                    <option key={v} value={v}>{v}</option>
+                  ))}
+                </select>
+              ) : (
+                <input type="text" value={version} onChange={e => setVersion(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. v1.0" />
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Fonts Included?</label>
@@ -115,7 +146,15 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">Description</label>
-            <textarea value={description} onChange={e => setDescription(e.target.value)} rows="3" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500" placeholder="Product details..."></textarea>
+            <textarea
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              rows="3"
+              maxLength={1000}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Product details..."
+            ></textarea>
+            <p className="text-xs text-gray-500 text-right mt-1">{description.length}/1000 characters</p>
           </div>
 
           {/* File Inputs */}

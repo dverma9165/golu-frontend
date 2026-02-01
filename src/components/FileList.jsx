@@ -106,26 +106,55 @@ const FileList = ({ refreshTrigger }) => {
               </div>
 
               {/* Content Area */}
-              <div className="p-6 flex-1 flex flex-col justify-between bg-white relative z-10">
+              <div className="p-6 flex-1 flex flex-col justify-between bg-white relative z-10 transition-colors duration-300">
                 <div>
-                  <div className="flex justify-between items-start mb-2">
+                  {/* Type & Rating */}
+                  <div className="flex justify-between items-center mb-2">
                     <span className="text-[10px] font-bold tracking-wider text-indigo-500 uppercase bg-indigo-50 px-2 py-1 rounded-md">
                       {file.fileType || 'Design'}
                     </span>
+                    {/* Rating Stars */}
+                    {(file.rating || 0) > 0 && (
+                      <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-full border border-yellow-100">
+                        <span className="text-xs font-bold text-yellow-700">{(file.rating || 0).toFixed(1)}</span>
+                        <div className="flex">
+                          <span className="text-yellow-400 text-xs">★</span>
+                        </div>
+                        <span className="text-[10px] text-gray-400">({file.numReviews || 0})</span>
+                      </div>
+                    )}
                   </div>
-                  <h3 className="text-xl font-bold text-slate-800 mb-2 leading-tight group-hover:text-indigo-600 transition-colors line-clamp-2" title={file.title || file.originalName}>
+
+                  <h3 className="text-lg font-bold text-slate-800 mb-1 leading-snug group-hover:text-indigo-600 transition-colors line-clamp-1" title={file.title || file.originalName}>
                     {file.title || file.originalName || 'Untitled'}
                   </h3>
+
+                  {/* Description */}
+                  <p className="text-xs text-gray-400 line-clamp-2 mb-3 h-8 leading-relaxed">
+                    {file.description || "No description available for this design."}
+                  </p>
                 </div>
 
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-50">
+                <div className="mt-auto pt-3 border-t border-slate-50 flex items-center justify-between">
+                  {/* Pricing Logic */}
                   <div className="flex flex-col">
-                    <span className="text-xs text-slate-400 font-medium uppercase">Price</span>
-                    <span className="font-extrabold text-2xl text-slate-900">₹{file.price || 0}</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">Price</span>
+                    <div className="flex items-baseline gap-2">
+                      {file.salePrice && file.salePrice < file.price ? (
+                        <>
+                          <span className="font-extrabold text-xl text-slate-900">₹{file.salePrice}</span>
+                          <span className="text-xs text-gray-400 line-through">₹{file.price}</span>
+                        </>
+                      ) : (
+                        <span className="font-extrabold text-xl text-slate-900">₹{file.price || 0}</span>
+                      )}
+                    </div>
                   </div>
+
                   <Link
                     to={`/product/${file._id}`}
-                    className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-600 hover:bg-indigo-600 hover:text-white transition-all duration-300 group-hover:rotate-45"
+                    className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-600 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all duration-300 shadow-sm hover:shadow-md hover:rotate-12"
+                    title="View Product Details"
                   >
                     <FaEye />
                   </Link>

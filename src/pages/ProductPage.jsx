@@ -57,12 +57,14 @@ const ProductPage = ({ token }) => {
         }
         try {
             await api.post('/api/auth/cart',
-                { productId: product._id },
-                { headers: { 'x-auth-token': token } }
+                { productId: product._id }
+                // Header is handled by api interceptor, but explicit override is fine too.
+                // Removing explicit header to rely on interceptor for consistency if token prop is missing but LS has it.
             );
             alert("Added to Cart!");
         } catch (err) {
-            alert("Failed to add to cart");
+            // Show specific error (e.g., "Already in cart")
+            alert(err.response?.data?.msg || "Failed to add to cart");
         }
     };
 
