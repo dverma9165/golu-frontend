@@ -129,7 +129,7 @@ const FileList = ({ refreshTrigger }) => {
         <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
         <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
 
-        {/* 3. Floating 3D Cards Background (Marquee) */}
+        {/* 3. Floating 3D Cards Background (Marquee)... */}
         <div className="absolute inset-0 z-0 opacity-20 transform rotate-y-12 scale-110 pointer-events-none">
           {/* Row 1 - Left to Right */}
           <div className="flex gap-8 mb-12 animate-marquee whitespace-nowrap">
