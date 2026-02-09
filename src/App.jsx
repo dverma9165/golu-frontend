@@ -277,11 +277,11 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
         <div className="h-24"></div>
 
         <Routes>
-          {/* Protected Home Route */}
-          <Route path="/" element={token ? <FileList /> : <Navigate to="/login" replace />} />
+          {/* Public Home Route */}
+          <Route path="/" element={<FileList />} />
 
-          {/* Protected Product Pages */}
-          <Route path="/product/:id" element={token ? <ProductPage token={token} /> : <Navigate to="/login" replace />} />
+          {/* Public Product Pages */}
+          <Route path="/product/:id" element={<ProductPage token={token} />} />
 
           {/* Public Auth Routes */}
           <Route path="/login" element={<Login setToken={setToken} />} />

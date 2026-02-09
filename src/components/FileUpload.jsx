@@ -8,10 +8,11 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
 
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
-  const [salePrice, setSalePrice] = useState('');
+  const [salePrice, setSalePrice] = useState(''); // Now Required
   const [description, setDescription] = useState('');
   const [version, setVersion] = useState('');
   const [fileType, setFileType] = useState('CDR');
+  const [category, setCategory] = useState('Wedding Card');
   const [fontsIncluded, setFontsIncluded] = useState('Yes');
 
   const [uploading, setUploading] = useState(false);
@@ -19,8 +20,8 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!thumbnail || !sourceFile || !title || !price) {
-      setMessage('Please fill required fields and select both files.');
+    if (!thumbnail || !sourceFile || !title || !price || !salePrice) {
+      setMessage('Please fill all required fields (including Sale Price) and select both files.');
       return;
     }
 
@@ -38,6 +39,7 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
     formData.append('description', description);
     formData.append('version', version);
     formData.append('fileType', fileType);
+    formData.append('category', category);
     formData.append('fontsIncluded', fontsIncluded);
 
     setUploading(true);
@@ -99,20 +101,30 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Price (₹) *</label>
-              <input type="number" value={price} onChange={e => setPrice(e.target.value)} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500" placeholder="0" />
+              <label className="block text-sm font-medium text-gray-700">Category</label>
+              <select value={category} onChange={e => setCategory(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500">
+                {['Wedding Card', 'Visiting Card', 'Invitation Card', 'Birthday Banner', 'Festival Post', 'Political Banner', 'Business Flyer', 'Social Media Post', 'Logo Design', 'Letterhead', 'Bill Book', 'Pamphlet', 'Brochure', 'Menu Card', 'Certificate', 'Resume/CV', 'Calendar', 'Sticker/Label', 'Envelope', 'ID Card', 'Poster', 'Thumbnail', 'Web Banner', 'Infographic', 'Presentation', 'E-Book Cover', 'T-Shirt Design', 'Mug Design', 'Standee', 'Flex Banner', 'Other'].map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Regular Price (Higher MRP) *</label>
+              <input type="number" value={price} onChange={e => setPrice(e.target.value)} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. 500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Sale Price (Optional)</label>
+              <label className="block text-sm font-medium text-gray-700">Sale Price (Selling Amount) *</label>
               <input
                 type="number"
                 value={salePrice}
                 onChange={e => setSalePrice(e.target.value)}
+                required
                 className={`mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 ${parseFloat(salePrice) >= parseFloat(price) ? 'border-red-300 focus:border-red-500' : 'border-gray-300'}`}
-                placeholder="0"
+                placeholder="e.g. 200"
               />
               {parseFloat(salePrice) >= parseFloat(price) && (
-                <p className="text-xs text-red-500 mt-1">Sale price must be less than regular price</p>
+                <p className="text-xs text-red-500 mt-1">Sale price must be less than Regular Price.</p>
               )}
             </div>
 

@@ -5,7 +5,8 @@ import FileUpload from '../components/FileUpload';
 import { FaCheck, FaExclamationCircle, FaSpinner } from 'react-icons/fa';
 
 const AdminDashboard = ({ adminPassword }) => {
-    const [orders, setOrders] = useState([]);
+    // Orders state removed
+
 
     // Product Management State
     const [products, setProducts] = useState([]);
@@ -16,11 +17,8 @@ const AdminDashboard = ({ adminPassword }) => {
     const [productTotalPages, setProductTotalPages] = useState(1);
 
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('orders'); // 'orders', 'upload', 'products'
+    const [activeTab, setActiveTab] = useState('products');
 
-    useEffect(() => {
-        fetchOrders();
-    }, []);
 
     useEffect(() => {
         if (activeTab === 'products') {
@@ -37,19 +35,8 @@ const AdminDashboard = ({ adminPassword }) => {
     }, [productSearch]);
 
 
-    const fetchOrders = async () => {
-        setLoading(true);
-        try {
-            const res = await api.get('/api/files/orders', {
-                headers: { 'x-admin-password': adminPassword }
-            });
-            setOrders(res.data);
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // fetchOrders function removed
+
 
     const fetchProducts = async () => {
         setProductLoading(true);
@@ -66,35 +53,8 @@ const AdminDashboard = ({ adminPassword }) => {
         }
     };
 
-    const handleApprove = async (orderId) => {
-        try {
-            await api.post('/api/files/approve',
-                { orderId },
-                { headers: { 'x-admin-password': adminPassword } }
-            );
-            // Update local state
-            setOrders(orders.map(o => o._id === orderId ? { ...o, status: 'Approved' } : o));
-            alert("Order Approved!");
-        } catch (err) {
-            console.error(err);
-            alert("Failed to approve");
-        }
-    };
+    // Order handlers removed
 
-    const handleReject = async (orderId) => {
-        if (!confirm("Are you sure you want to reject this order?")) return;
-        try {
-            await api.post('/api/files/reject',
-                { orderId },
-                { headers: { 'x-admin-password': adminPassword } }
-            );
-            // Update local state
-            setOrders(orders.map(o => o._id === orderId ? { ...o, status: 'Rejected' } : o));
-        } catch (err) {
-            console.error(err);
-            alert("Failed to reject");
-        }
-    };
 
     const handleDeleteProduct = async (productId) => {
         if (!confirm("Are you sure you want to delete this product? This action cannot be undone.")) return;
@@ -113,7 +73,7 @@ const AdminDashboard = ({ adminPassword }) => {
 
     const handleUploadComplete = () => {
         alert("Product Uploaded Successfully!");
-        setActiveTab('orders'); // Switch back to see if logic needed, or just stay
+        setActiveTab('products');
     };
 
     return (
@@ -125,12 +85,7 @@ const AdminDashboard = ({ adminPassword }) => {
                 </div>
 
                 <div className="flex bg-gray-200 rounded-lg p-1 mt-4 md:mt-0 font-medium text-sm">
-                    <button
-                        onClick={() => setActiveTab('orders')}
-                        className={`px-4 py-2 rounded-md transition-all ${activeTab === 'orders' ? 'bg-white shadow text-gray-900' : 'text-gray-600 hover:text-gray-900'}`}
-                    >
-                        Manage Orders
-                    </button>
+
                     <button
                         onClick={() => setActiveTab('products')}
                         className={`px-4 py-2 rounded-md transition-all ${activeTab === 'products' ? 'bg-white shadow text-gray-900' : 'text-gray-600 hover:text-gray-900'}`}
@@ -273,97 +228,7 @@ const AdminDashboard = ({ adminPassword }) => {
                 </div>
             )}
 
-            {activeTab === 'orders' && (
-                <div className="bg-white rounded-lg shadow overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50 hidden md:table-header-group">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Customer</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">UTR</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Product</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200 block md:table-row-group">
-                                {loading ? (
-                                    <tr className="block md:table-row"><td colSpan="7" className="text-center py-4 block md:table-cell">Loading...</td></tr>
-                                ) : orders.map((order) => (
-                                    <tr key={order._id} className="hover:bg-gray-50 block md:table-row border-b md:border-none mb-4 md:mb-0 shadow-sm md:shadow-none p-4 md:p-0">
-                                        <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500 block md:table-cell flex justify-between md:block">
-                                            <span className="font-bold text-gray-700 md:hidden">Date:</span>
-                                            {new Date(order.createdAt).toLocaleDateString()}
-                                        </td>
-                                        <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm font-medium text-gray-900 block md:table-cell flex justify-between md:block">
-                                            <span className="font-bold text-gray-700 md:hidden">Customer:</span>
-                                            {order.customerName} //l
-                                        </td>
-                                        <td className="px-2 py-2 md:px-6 md:py-4 text-sm font-mono text-gray-600 max-w-[200px] block md:table-cell flex justify-between md:block items-center">
-                                            <span className="font-bold text-gray-700 md:hidden mr-2">UTR:</span>
-                                            <div className="text-right md:text-left">
-                                                <div className="truncate md:w-32" title={order.utr}>{order.utr}</div>
-                                                {order.paymentScreenshot && order.paymentScreenshot.viewLink && (
-                                                    <a
-                                                        href={order.paymentScreenshot.viewLink}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-xs text-blue-500 hover:underline flex items-center justify-end md:justify-start gap-1 mt-1"
-                                                    >
-                                                        View Screenshot
-                                                    </a>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td className="px-2 py-2 md:px-6 md:py-4 text-sm text-gray-600 max-w-[200px] block md:table-cell flex justify-between md:block">
-                                            <span className="font-bold text-gray-700 md:hidden">Product:</span>
-                                            <div className="truncate md:w-48 text-right md:text-left" title={order.product ? order.product.title : 'Deleted'}>
-                                                {order.product ? order.product.title : <span className="text-red-400">Deleted</span>}
-                                            </div>
-                                        </td>
-                                        <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-900 font-bold block md:table-cell flex justify-between md:block">
-                                            <span className="font-bold text-gray-700 md:hidden">Amount:</span>
-                                            ₹{order.amount}
-                                        </td>
-                                        <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap block md:table-cell flex justify-between md:block">
-                                            <span className="font-bold text-gray-700 md:hidden">Status:</span>
-                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${order.status === 'Approved' ? 'bg-green-100 text-green-800' : order.status === 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                                                {order.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm font-medium block md:table-cell flex justify-between md:block items-center">
-                                            <span className="font-bold text-gray-700 md:hidden">Action:</span>
-                                            <div className="flex justify-end md:justify-start">
-                                                {order.status === 'Pending' && (
-                                                    <div className="flex gap-2">
-                                                        <button
-                                                            onClick={() => handleApprove(order._id)}
-                                                            className="text-white bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-xs transition-colors"
-                                                        >
-                                                            Approve
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleReject(order._id)}
-                                                            className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-xs transition-colors"
-                                                        >
-                                                            Reject
-                                                        </button>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {!loading && orders.length === 0 && (
-                                    <tr className="block md:table-row"><td colSpan="7" className="text-center py-10 text-gray-500 block md:table-cell">No orders found.</td></tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            )}
+
         </div>
     );
 };
