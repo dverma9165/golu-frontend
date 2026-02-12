@@ -1,22 +1,45 @@
 import React, { useState } from 'react';
-import { FaLock, FaTimes } from 'react-icons/fa';
+import { FaLock, FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 const AdminLogin = ({ isOpen, onClose, onLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (password.trim() === '') {
       setError('Password cannot be empty');
       return;
     }
-    onLogin(password);
-    setPassword('');
+    setLoading(true);
     setError('');
-    onClose();
+    try {
+      // Verify password by hitting a protected admin endpoint
+      await api.get('/api/files/all-products?page=1&limit=1', {
+        headers: { 'x-admin-password': password }
+      });
+      // Password is correct — proceed
+      onLogin(password);
+      setPassword('');
+      setError('');
+      onClose();
+      navigate('/admin');
+    } catch (err) {
+      if (err.response?.status === 403) {
+        setError('Incorrect admin password');
+      } else {
+        setError('Server error. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,20 +58,31 @@ const AdminLogin = ({ isOpen, onClose, onLogin }) => {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <input
-              type="password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 bg-white text-gray-900 transition-colors"
-              placeholder="Admin Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 bg-white text-gray-900 transition-colors"
+                placeholder="Admin Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button type="button" onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                {showPassword ? <FaEyeSlash className="w-4 h-4" /> : <FaEye className="w-4 h-4" />}
+              </button>
+            </div>
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200 disabled:opacity-60 flex items-center justify-center gap-2"
           >
-            Login
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            ) : (
+              'Login'
+            )}
           </button>
         </form>
       </div>

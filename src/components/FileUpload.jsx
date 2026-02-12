@@ -2,6 +2,104 @@ import React, { useState, useRef } from 'react';
 import api from '../services/api';
 import { FaCloudUploadAlt, FaSpinner, FaCheckCircle, FaFileAlt, FaImage } from 'react-icons/fa';
 
+const FILE_TYPES_DATA = {
+  "fileTypes": [
+    {
+      "parent": "CDR",
+      "children": [
+        "9", "10", "11", "12", "X3", "X4", "X5", "X6", "X7", "X8",
+        "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024"
+      ]
+    },
+    {
+      "parent": "AI",
+      "children": [
+        "8", "9", "10", "CS", "CS2", "CS3", "CS4", "CS5", "CS6",
+        "CC 2013", "CC 2014", "CC 2015", "CC 2017", "CC 2018", "CC 2019", "CC 2020", "CC 2021", "CC 2022", "CC 2023", "CC 2024"
+      ]
+    },
+    {
+      "parent": "PSD",
+      "children": [
+        "7", "CS", "CS2", "CS3", "CS4", "CS5", "CS6",
+        "CC 2013", "CC 2014", "CC 2015", "CC 2017", "CC 2018", "CC 2019", "CC 2020", "CC 2021", "CC 2022", "CC 2023", "CC 2024"
+      ]
+    },
+    {
+      "parent": "PDF",
+      "children": [
+        "1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "2.0",
+        "PDF/X-1a", "PDF/X-3", "PDF/X-4"
+      ]
+    },
+    {
+      "parent": "EPS",
+      "children": [
+        "Illustrator 8", "CS", "CS2", "CS3", "CS4", "CS5", "CS6",
+        "PostScript Level 1", "PostScript Level 2", "PostScript Level 3"
+      ]
+    },
+    {
+      "parent": "TIFF",
+      "children": [
+        "8-bit", "16-bit", "32-bit", "LZW Compression", "ZIP Compression", "Uncompressed"
+      ]
+    },
+    {
+      "parent": "JPG",
+      "children": [
+        "Baseline", "Progressive", "JPEG 2000"
+      ]
+    },
+    {
+      "parent": "PNG",
+      "children": [
+        "PNG-8", "PNG-24", "PNG-32"
+      ]
+    },
+    {
+      "parent": "SVG",
+      "children": [
+        "1.0", "1.1", "2.0"
+      ]
+    },
+    {
+      "parent": "INDD",
+      "children": [
+        "CS", "CS2", "CS3", "CS4", "CS5", "CS6",
+        "CC 2013", "CC 2014", "CC 2015", "CC 2017", "CC 2018", "CC 2019", "CC 2020", "CC 2021", "CC 2022", "CC 2023", "CC 2024"
+      ]
+    },
+    {
+      "parent": "RAW",
+      "children": [
+        { "type": "Canon", "formats": ["CR2", "CR3"] },
+        { "type": "Nikon", "formats": ["NEF"] },
+        { "type": "Sony", "formats": ["ARW"] },
+        { "type": "Adobe", "formats": ["DNG"] }
+      ]
+    },
+    {
+      "parent": "ZIP",
+      "children": [
+        "ZIP 2.0", "ZIP64"
+      ]
+    },
+    {
+      "parent": "RAR",
+      "children": [
+        "RAR4", "RAR5"
+      ]
+    },
+    {
+      "parent": "7Z",
+      "children": [
+        "LZMA", "LZMA2"
+      ]
+    }
+  ]
+};
+
 const FileUpload = ({ onUploadSuccess, adminPassword }) => {
   const [thumbnail, setThumbnail] = useState(null);
   const [sourceFile, setSourceFile] = useState(null);
@@ -11,7 +109,7 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
   const [salePrice, setSalePrice] = useState(''); // Now Required
   const [description, setDescription] = useState('');
   const [version, setVersion] = useState('');
-  const [fileType, setFileType] = useState('CDR');
+  const [fileType, setFileType] = useState(FILE_TYPES_DATA.fileTypes[0].parent);
   const [category, setCategory] = useState('Wedding Card');
   const [fontsIncluded, setFontsIncluded] = useState('Yes');
 
@@ -89,14 +187,17 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">File Type</label>
-              <select value={fileType} onChange={e => setFileType(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500">
-                <option>CDR</option>
-                <option>PSD</option>
-                <option>AI</option>
-                <option>EPS</option>
-                <option>PDF</option>
-                <option>TIFF</option>
-                <option>ZIP</option>
+              <select
+                value={fileType}
+                onChange={e => {
+                  setFileType(e.target.value);
+                  setVersion(''); // Reset version on type change
+                }}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500"
+              >
+                {FILE_TYPES_DATA.fileTypes.map(ft => (
+                  <option key={ft.parent} value={ft.parent}>{ft.parent}</option>
+                ))}
               </select>
             </div>
 
@@ -129,23 +230,28 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                {fileType === 'CDR' ? 'CorelDRAW Version' : 'Version'}
-              </label>
-              {fileType === 'CDR' ? (
-                <select
-                  value={version}
-                  onChange={e => setVersion(e.target.value)}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">Select Version</option>
-                  {['X3', 'X4', 'X5', 'X6', 'X7', 'X8', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'].map(v => (
-                    <option key={v} value={v}>{v}</option>
-                  ))}
-                </select>
-              ) : (
-                <input type="text" value={version} onChange={e => setVersion(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. v1.0" />
-              )}
+              <label className="block text-sm font-medium text-gray-700">Version / Format</label>
+              <select
+                value={version}
+                onChange={e => setVersion(e.target.value)}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Select Version</option>
+                {FILE_TYPES_DATA.fileTypes.find(ft => ft.parent === fileType)?.children.map((child, idx) => {
+                  if (typeof child === 'string') {
+                    return <option key={idx} value={child}>{child}</option>;
+                  } else if (typeof child === 'object' && child.type && child.formats) {
+                    return (
+                      <optgroup key={idx} label={child.type}>
+                        {child.formats.map(fmt => (
+                          <option key={fmt} value={fmt}>{fmt}</option>
+                        ))}
+                      </optgroup>
+                    );
+                  }
+                  return null;
+                })}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Fonts Included?</label>

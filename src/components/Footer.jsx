@@ -12,7 +12,7 @@ const Footer = () => {
                         <Link to="/" className="flex items-center gap-3 mb-6 group">
                             <div className="relative">
                                 <div className="absolute -inset-1 bg-linear-to-r from-indigo-500 to-purple-500 rounded-full blur opacity-25 group-hover:opacity-60 transition duration-200"></div>
-                                <img src="/logo.jpg" alt="Diksha Design" className="relative w-12 h-12 rounded-full object-cover border-2 border-slate-700 shadow-lg" />
+                                <img src="/logo.png" alt="Diksha Design" className="relative w-12 h-12 rounded-full object-cover border-2 border-slate-700 shadow-lg" />
                             </div>
                             <div className="flex flex-col">
                                 <span className="font-extrabold text-xl tracking-tight text-white leading-none font-display">Diksha</span>

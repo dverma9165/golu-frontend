@@ -255,6 +255,51 @@ const ProductPage = ({ token }) => {
                                 </div>
                             </div>
 
+                            {/* ── DISCLAIMER SECTION ── */}
+                            <div className="mt-8 space-y-3">
+                                {/* Note for Printers */}
+                                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                                    <div className="flex items-start gap-2">
+                                        <span className="text-amber-600 font-bold text-lg leading-none mt-0.5">⚠</span>
+                                        <div>
+                                            <p className="text-sm font-bold text-amber-800 mb-1">Note: For Printers & Designers Only</p>
+                                            <p className="text-xs text-amber-700 leading-relaxed">
+                                                This design is only for Printers and Designers. The website owner is not responsible for any errors. Please verify before use or printing.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Customization */}
+                                <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4">
+                                    <p className="text-sm font-bold text-indigo-800 mb-0.5">💰 Customization Starts From: ₹50–₹100</p>
+                                </div>
+
+                                {/* Instant Download Policy */}
+                                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                                    <p className="text-sm font-bold text-slate-800 mb-1">📥 Instant Download</p>
+                                    <p className="text-xs text-slate-600 leading-relaxed">
+                                        After buying this design, your files will be available to download once payment is confirmed. <span className="font-semibold text-red-600">Instant download items don't accept returns, exchanges, or refunds.</span> Please check all details before buying (fonts, version, and files).
+                                    </p>
+                                </div>
+
+                                {/* Copyright Disclaimer */}
+                                <div className="bg-red-50 border border-red-100 rounded-xl p-4">
+                                    <p className="text-sm font-bold text-red-800 mb-1">⚖️ Copyright Disclaimer</p>
+                                    <p className="text-xs text-red-700 leading-relaxed mb-2">
+                                        This file is uploaded by the user. We do not claim any copyright for the content. If the contents violate your copyright, please email us at <a href="mailto:rajv437@gmail.com" className="underline font-semibold">rajv437@gmail.com</a>, and we will remove the contents within 24–48 hours.
+                                    </p>
+                                    <div className="border-t border-red-100 pt-2 mt-2">
+                                        <p className="text-xs text-red-700 leading-relaxed font-medium">
+                                            ये डिजाईन प्रिंटिंग प्रेस वालों के लिए है अगर आपको एडिट करना आता है तभी खरीदें।
+                                        </p>
+                                        <p className="text-xs text-red-700 leading-relaxed mt-1 font-medium">
+                                            खरीदने से पहले अच्छे से चेक कर लें कौन सी फाइल है, कौन सा वर्ज़न है, फॉण्ट दिया गया है की नहीं।
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
                         <div className="mt-auto space-y-4">
