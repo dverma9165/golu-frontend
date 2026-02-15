@@ -640,8 +640,8 @@ const FileList = () => {
     // Switch to grid view
     setViewMode('grid');
 
-    // Scroll to top of list
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to top of list container
+    document.getElementById('main-scroll-container')?.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const clearFilters = () => {
