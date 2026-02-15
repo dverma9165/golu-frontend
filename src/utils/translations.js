@@ -244,10 +244,13 @@ export const translations = {
         downloadBtn: "Download",
         orderRejected: "Order Rejected",
         approvalPending: "Approval Pending",
-        linkExpires: "Link expires in 72 hours",
+        linkExpires: "Link expires in 15 days",
         downloadNotAvailable: "Download not available",
         downloadFailed: "Download failed",
         fetchOrdersFailed: "Failed to fetch orders",
+        downloadExpired: "Download Expired",
+        linkLimitReached: "Download limit reached (15 days)",
+        download: "Download",
 
         // Review Modal
         reviewSubmitted: "Review Submitted!",
@@ -504,10 +507,13 @@ export const translations = {
         downloadBtn: "डाउनलोड करें",
         orderRejected: "ऑर्डर अस्वीकृत",
         approvalPending: "अनुमोदन लंबित",
-        linkExpires: "लिंक 72 घंटों में समाप्त हो जाएगा",
+        linkExpires: "लिंक 15 दिनों में समाप्त हो जाएगा",
         downloadNotAvailable: "डाउनलोड उपलब्ध नहीं",
         downloadFailed: "डाउनलोड विफल",
         fetchOrdersFailed: "ऑर्डर लाने में विफल",
+        downloadExpired: "डाउनलोड समाप्त",
+        linkLimitReached: "डाउनलोड सीमा समाप्त (15 दिन)",
+        download: "डाउनलोड",
 
         // Review Modal
         reviewSubmitted: "समीक्षा जमा कर दी गई!",

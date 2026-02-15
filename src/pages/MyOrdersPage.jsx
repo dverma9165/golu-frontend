@@ -115,7 +115,8 @@ const MyOrdersPage = () => {
                                         <div className="absolute top-4 right-4">
                                             <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm ${order.status === 'Approved' ? 'bg-green-100 text-green-700' :
                                                 order.status === 'Rejected' ? 'bg-red-100 text-red-700' :
-                                                    'bg-yellow-100 text-yellow-700'
+                                                    order.status === 'Expired' ? 'bg-gray-100 text-gray-500' :
+                                                        'bg-yellow-100 text-yellow-700'
                                                 }`}>
                                                 {order.status}
                                             </span>
@@ -168,6 +169,10 @@ const MyOrdersPage = () => {
                                                         <FaDownload className="w-3 h-3" /> {t('downloadBtn')}
                                                     </button>
                                                 </>
+                                            ) : order.status === 'Expired' ? (
+                                                <button disabled className="col-span-2 bg-gray-100 text-gray-400 text-xs font-bold py-2.5 rounded-xl cursor-not-allowed flex items-center justify-center gap-2">
+                                                    <FaDownload className="w-3 h-3" /> {t('downloadExpired')}
+                                                </button>
                                             ) : (
                                                 <div className="col-span-2 text-center text-xs text-gray-400 font-medium py-2.5 bg-slate-50 rounded-xl border border-slate-100">
                                                     {order.status === 'Rejected' ? t('orderRejected') : t('approvalPending')}

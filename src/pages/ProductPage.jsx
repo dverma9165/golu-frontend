@@ -48,7 +48,9 @@ const ProductPage = ({ token }) => {
             const match = orders.find(o => o.product && o.product._id === id);
 
             if (match) {
-                setPurchaseStatus(match.status === 'Approved' ? 'approved' : 'pending');
+                if (match.status === 'Approved') setPurchaseStatus('approved');
+                else if (match.status === 'Expired') setPurchaseStatus('expired');
+                else setPurchaseStatus('pending');
                 setOrderId(match._id);
             }
         } catch (err) {
@@ -310,6 +312,22 @@ const ProductPage = ({ token }) => {
                                                     className="w-full bg-green-600 text-white rounded-xl py-4 font-bold text-base sm:text-lg whitespace-nowrap hover:bg-green-700 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3"
                                                 >
                                                     <FaDownload className="shrink-0" /> {t('downloadNow')}
+                                                </button>
+                                            </div>
+                                        ) : purchaseStatus === 'expired' ? (
+                                            <div className="bg-red-50 p-6 rounded-2xl border border-red-100 flex flex-col items-center gap-3 text-red-800 text-center">
+                                                <div className="flex items-center gap-2 font-bold text-lg">
+                                                    <FaLock className="w-5 h-5" />
+                                                    <span>{t('downloadExpired') || 'Download Link Expired'}</span>
+                                                </div>
+                                                <p className="text-xs text-red-600">
+                                                    {t('linkLimitReached') || 'The 15-day download limit has been reached.'}
+                                                </p>
+                                                <button
+                                                    disabled
+                                                    className="w-full bg-red-100 text-red-400 cursor-not-allowed rounded-xl py-3 font-bold text-base mt-2 flex items-center justify-center gap-2"
+                                                >
+                                                    <FaDownload /> {t('download') || 'Download'}
                                                 </button>
                                             </div>
                                         ) : purchaseStatus === 'pending' ? (
