@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import api from '../services/api';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaSignInAlt, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useLanguage } from '../context/LanguageContext';
 
 const Login = ({ setToken }) => {
+    const { t } = useLanguage();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -22,7 +24,7 @@ const Login = ({ setToken }) => {
             setToken(token);
             navigate('/');
         } catch (err) {
-            setError(err.response?.data?.msg || 'Login failed');
+            setError(err.response?.data?.msg || t('loginFailed'));
         } finally {
             setLoading(false);
         }
@@ -48,8 +50,8 @@ const Login = ({ setToken }) => {
                         </div>
                     </div>
 
-                    <h2 className="text-center text-xl font-bold text-gray-800 mb-1">Welcome Back</h2>
-                    <p className="text-center text-xs text-gray-400 mb-5">Sign in to your account</p>
+                    <h2 className="text-center text-xl font-bold text-gray-800 mb-1">{t('welcomeBack')}</h2>
+                    <p className="text-center text-xs text-gray-400 mb-5">{t('signInTitle')}</p>
 
                     <form onSubmit={handleLogin} className="space-y-4">
                         {/* Email */}
@@ -58,7 +60,7 @@ const Login = ({ setToken }) => {
                             <input
                                 type="email" required
                                 className="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder-gray-400"
-                                placeholder="Email address"
+                                placeholder={t('emailAddress')}
                                 value={email} onChange={e => setEmail(e.target.value)}
                             />
                         </div>
@@ -69,7 +71,7 @@ const Login = ({ setToken }) => {
                             <input
                                 type={showPassword ? 'text' : 'password'} required
                                 className="w-full pl-10 pr-10 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder-gray-400"
-                                placeholder="Password"
+                                placeholder={t('password')}
                                 value={password} onChange={e => setPassword(e.target.value)}
                             />
                             <button type="button" onClick={() => setShowPassword(!showPassword)}
@@ -94,7 +96,7 @@ const Login = ({ setToken }) => {
                             ) : (
                                 <>
                                     <FaSignInAlt className="w-4 h-4" />
-                                    Sign In
+                                    {t('signIn')}
                                 </>
                             )}
                         </button>
@@ -102,7 +104,7 @@ const Login = ({ setToken }) => {
 
                     <div className="mt-5 text-center">
                         <Link to="/register" className="text-xs text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
-                            Don't have an account? <span className="font-bold">Sign Up</span>
+                            {t('dontHaveAccount')} <span className="font-bold">{t('signUp')}</span>
                         </Link>
                     </div>
                 </div>

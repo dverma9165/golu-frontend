@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { FaTimes, FaDownload, FaSpinner, FaChevronLeft, FaChevronRight, FaStar, FaPen } from 'react-icons/fa';
 import ReviewModal from './ReviewModal';
+import { useLanguage } from '../context/LanguageContext';
 
 const MyOrdersModal = ({ isOpen, onClose }) => {
+    const { t } = useLanguage();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
@@ -93,78 +95,96 @@ const MyOrdersModal = ({ isOpen, onClose }) => {
                                 const hasDiscount = salePrice && salePrice < price;
                                 const discountPercent = hasDiscount ? Math.round(((price - salePrice) / price) * 100) : 0;
 
+                                // Thumbnail Logic
+                                const thumbnailLink = product.thumbnail?.googleDriveId
+                                    ? `${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${product.thumbnail.googleDriveId}`
+                                    : null;
+
                                 return (
-                                    <div key={order._id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col group">
-                                        {/* Product Thumbnail (if available) - assuming thumbnail handled elsewhere or needs adding.
-                                            Previous artifacts showed thumbnail support in Product model but not explicitly in this list view?
-                                            Let's check if thumbnail is available in product object.
-                                         */}
-                                        <div className="flex justify-between items-start mb-4">
-                                            <div className="flex-1">
-                                                <p className="text-xs text-gray-400 font-mono mb-1">Order #{order._id.slice(-6)}</p>
-                                                <h3 className="font-bold text-lg text-gray-800 line-clamp-1 leading-tight mb-1" title={product.title}>
-                                                    {product.title}
-                                                </h3>
-                                                {/* Description */}
-                                                <p className="text-xs text-gray-500 line-clamp-2 mb-2 min-h-[2.5em]">
-                                                    {product.description || "No description available."}
-                                                </p>
-
-                                                {/* Price & Discount */}
-                                                <div className="flex items-center gap-2 text-sm">
-                                                    {hasDiscount ? (
-                                                        <>
-                                                            <span className="font-bold text-slate-800">₹{salePrice}</span>
-                                                            <span className="text-gray-400 line-through text-xs">₹{price}</span>
-                                                            <span className="text-xs font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">
-                                                                {discountPercent}% OFF
-                                                            </span>
-                                                        </>
-                                                    ) : (
-                                                        <span className="font-bold text-slate-800">₹{price}</span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide ml-2 ${order.status === 'Approved' ? 'bg-green-100 text-green-600' :
-                                                order.status === 'Rejected' ? 'bg-red-100 text-red-600' :
-                                                    'bg-yellow-100 text-yellow-600'
-                                                }`}>
-                                                {order.status}
-                                            </span>
-                                        </div>
-
-                                        {/* Separator */}
-                                        <div className="h-px bg-gray-50 my-3"></div>
-
-                                        <div className="mt-auto grid grid-cols-2 gap-3">
-                                            {/* Action Buttons */}
-                                            {order.status === 'Approved' ? (
-                                                <>
-                                                    <button
-                                                        onClick={() => openReviewModal(product)}
-                                                        className="col-span-1 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 text-xs font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
-                                                        title="Write a Review"
-                                                    >
-                                                        <FaPen className="w-3 h-3" /> Review
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDownload(order._id, order.status)}
-                                                        className="col-span-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-indigo-200 shadow-sm"
-                                                    >
-                                                        <FaDownload className="w-3 h-3" /> Download
-                                                    </button>
-
-                                                </>
+                                    <div key={order._id} className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col group overflow-hidden">
+                                        {/* Product Thumbnail */}
+                                        <div className="h-40 bg-gray-50 relative overflow-hidden flex items-center justify-center">
+                                            {thumbnailLink ? (
+                                                <img
+                                                    src={thumbnailLink}
+                                                    alt={product.title}
+                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                                />
                                             ) : (
-                                                <div className="col-span-2 text-center text-xs text-gray-400 font-medium py-2 bg-gray-50 rounded-lg">
-                                                    {order.status === 'Rejected' ? 'Order Rejected' : 'Approval Pending'}
+                                                <div className="flex flex-col items-center gap-2 text-gray-300">
+                                                    <FaStar className="w-8 h-8" />
+                                                    <span className="text-xs font-medium">No Preview</span>
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="mt-2 text-center">
-                                            {order.status === 'Approved' && (
-                                                <span className="text-[10px] text-gray-400">Download valid for 72 hours</span>
-                                            )}
+
+                                        <div className="p-4 flex flex-col flex-1">
+                                            <div className="flex justify-between items-start mb-2">
+                                                <div className="flex-1">
+                                                    <p className="text-[10px] text-gray-400 font-mono mb-1 tracking-wider">ORDER #{order._id.slice(-6).toUpperCase()}</p>
+                                                    <h3 className="font-bold text-base text-gray-800 line-clamp-1 leading-tight mb-1" title={product.title}>
+                                                        {product.title}
+                                                    </h3>
+                                                    {/* Description */}
+                                                    <p className="text-xs text-gray-500 line-clamp-2 mb-3 min-h-[2.5em]">
+                                                        {product.description || "No description available."}
+                                                    </p>
+
+                                                    {/* Price & Discount */}
+                                                    <div className="flex items-center gap-2 text-sm">
+                                                        {hasDiscount ? (
+                                                            <>
+                                                                <span className="font-bold text-slate-800">₹{salePrice}</span>
+                                                                <span className="text-gray-400 line-through text-xs">₹{price}</span>
+                                                                <span className="text-xs font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">
+                                                                    {discountPercent}% OFF
+                                                                </span>
+                                                            </>
+                                                        ) : (
+                                                            <span className="font-bold text-slate-800">₹{price}</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide ml-2 ${order.status === 'Approved' ? 'bg-green-100 text-green-600' :
+                                                    order.status === 'Rejected' ? 'bg-red-100 text-red-600' :
+                                                        'bg-yellow-100 text-yellow-600'
+                                                    }`}>
+                                                    {order.status}
+                                                </span>
+                                            </div>
+
+                                            {/* Separator */}
+                                            <div className="h-px bg-gray-50 my-3"></div>
+
+                                            <div className="mt-auto grid grid-cols-2 gap-3">
+                                                {/* Action Buttons */}
+                                                {order.status === 'Approved' ? (
+                                                    <>
+                                                        <button
+                                                            onClick={() => openReviewModal(product)}
+                                                            className="col-span-1 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 text-xs font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
+                                                            title="Write a Review"
+                                                        >
+                                                            <FaPen className="w-3 h-3" /> Review
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDownload(order._id, order.status)}
+                                                            className="col-span-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-indigo-200 shadow-sm"
+                                                        >
+                                                            <FaDownload className="w-3 h-3" /> Download
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <div className="col-span-2 text-center text-xs text-gray-400 font-medium py-2 bg-gray-50 rounded-lg">
+                                                        {order.status === 'Rejected' ? 'Order Rejected' : 'Approval Pending'}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="mt-2 text-center">
+                                                {order.status === 'Approved' && (
+                                                    <span className="text-[10px] text-gray-400">Download valid for 72 hours</span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 );

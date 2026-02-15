@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import api from '../services/api';
 import { FaStar, FaTimes, FaSpinner } from 'react-icons/fa';
+import { useLanguage } from '../context/LanguageContext';
 
 const ReviewModal = ({ isOpen, onClose, productId, productName, initialRating }) => {
+    const { t } = useLanguage();
     const [rating, setRating] = useState(initialRating || 5);
     const [comment, setComment] = useState('');
     const [loading, setLoading] = useState(false);
@@ -25,7 +27,7 @@ const ReviewModal = ({ isOpen, onClose, productId, productName, initialRating })
                 setRating(5);
             }, 2000);
         } catch (err) {
-            setError(err.response?.data?.msg || 'Failed to submit review');
+            setError(err.response?.data?.msg || t('failedSubmitReview'));
         } finally {
             setLoading(false);
         }
@@ -44,13 +46,13 @@ const ReviewModal = ({ isOpen, onClose, productId, productName, initialRating })
                         <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
                             <FaStar className="w-8 h-8" />
                         </div>
-                        <h3 className="text-xl font-bold text-gray-800">Review Submitted!</h3>
-                        <p className="text-gray-500 mt-2">Thank you for your feedback.</p>
+                        <h3 className="text-xl font-bold text-gray-800">{t('reviewSubmitted')}</h3>
+                        <p className="text-gray-500 mt-2">{t('thankYouFeedback')}</p>
                     </div>
                 ) : (
                     <>
-                        <h3 className="text-xl font-bold text-gray-800 mb-2">Rate & Review</h3>
-                        <p className="text-sm text-gray-500 mb-6">Share your experience with <span className="font-semibold text-gray-700">{productName}</span></p>
+                        <h3 className="text-xl font-bold text-gray-800 mb-2">{t('rateAndReview')}</h3>
+                        <p className="text-sm text-gray-500 mb-6">{t('shareExperienceWith')} <span className="font-semibold text-gray-700">{productName}</span></p>
 
                         <form onSubmit={handleSubmit}>
                             <div className="flex justify-center gap-2 mb-6">
@@ -69,10 +71,10 @@ const ReviewModal = ({ isOpen, onClose, productId, productName, initialRating })
                             </div>
 
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Your Review</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">{t('yourReview')}</label>
                                 <textarea
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-h-[100px] resize-none"
-                                    placeholder="what did you like or dislike?"
+                                    placeholder={t('reviewPlaceholder')}
                                     value={comment}
                                     onChange={(e) => setComment(e.target.value)}
                                     required
@@ -86,7 +88,7 @@ const ReviewModal = ({ isOpen, onClose, productId, productName, initialRating })
                                 disabled={loading}
                                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
                             >
-                                {loading ? <FaSpinner className="animate-spin" /> : 'Submit Review'}
+                                {loading ? <FaSpinner className="animate-spin" /> : t('submitReviewBtn')}
                             </button>
                         </form>
                     </>

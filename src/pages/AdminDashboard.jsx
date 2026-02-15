@@ -20,12 +20,31 @@ const AdminDashboard = ({ adminPassword }) => {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('products');
 
+    // Coupon State
+    const [coupons, setCoupons] = useState([]);
+
 
     useEffect(() => {
         if (activeTab === 'products') {
             fetchProducts();
+        } else if (activeTab === 'coupons') {
+            fetchCoupons();
         }
-    }, [activeTab, productPage, productSort]); // Search is handled by explicit button or debounce (using simple button here for now or effect on strict match)
+    }, [activeTab, productPage, productSort]);
+
+    const fetchCoupons = async () => {
+        setLoading(true);
+        try {
+            const res = await api.get('/api/coupons', {
+                headers: { 'x-admin-password': adminPassword }
+            });
+            setCoupons(res.data);
+        } catch (err) {
+            console.error("Failed to fetch coupons");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Debounce search effect
     useEffect(() => {
@@ -98,8 +117,221 @@ const AdminDashboard = ({ adminPassword }) => {
                     >
                         Upload Product
                     </button>
+                    <button
+                        onClick={() => setActiveTab('coupons')}
+                        className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-md transition-all ${activeTab === 'coupons' ? 'bg-white shadow text-gray-900' : 'text-gray-600 hover:text-gray-900'}`}
+                    >
+                        Coupons
+                    </button>
                 </div>
             </div>
+
+            {activeTab === 'products' && (
+                <div className="space-y-6">
+                    {/* Controls */}
+                    <div className="flex flex-col sm:flex-row gap-4 justify-between bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                        <div className="relative flex-1">
+                            <input
+                                type="text"
+                                placeholder="Search products..."
+                                className="w-full pl-4 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                                value={productSearch}
+                                onChange={(e) => setProductSearch(e.target.value)}
+                            />
+                        </div>
+                        <select
+                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white"
+                            value={productSort}
+                            onChange={(e) => setProductSort(e.target.value)}
+                        >
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                        </select>
+                    </div>
+
+                    {/* Products List (Responsive) */}
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+
+                        {/* Desktop Table View */}
+                        <div className="hidden sm:block overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead className="bg-gray-50 border-b border-gray-100">
+                                    <tr>
+                                        <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Product</th>
+                                        <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Price</th>
+                                        <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Category</th>
+                                        <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {productLoading ? (
+                                        <tr>
+                                            <td colSpan="4" className="px-6 py-8 text-center text-gray-500">
+                                                <div className="flex justify-center items-center gap-2">
+                                                    <FaSpinner className="animate-spin" /> Loading products...
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ) : products.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="4" className="px-6 py-8 text-center text-gray-500">
+                                                No products found.
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        products.map((product) => (
+                                            <tr key={product._id} className="hover:bg-gray-50 transition-colors">
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-12 h-12 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex-shrink-0">
+                                                            {product.thumbnail && product.thumbnail.googleDriveId ? (
+                                                                <img
+                                                                    src={`${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${product.thumbnail.googleDriveId}`}
+                                                                    alt={product.title}
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                            ) : (
+                                                                <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No Img</div>
+                                                            )}
+                                                        </div>
+                                                        <div>
+                                                            <Link to={`/product/${product._id}`} className="font-bold text-gray-900 hover:text-indigo-600 line-clamp-1">
+                                                                {product.title}
+                                                            </Link>
+                                                            <span className="text-xs text-gray-500">{product.fileType} • {product.version}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div>
+                                                        {product.salePrice && product.salePrice < product.price ? (
+                                                            <div className="flex flex-col">
+                                                                <span className="font-bold text-green-600">₹{product.salePrice}</span>
+                                                                <span className="text-xs text-gray-400 line-through">₹{product.price}</span>
+                                                            </div>
+                                                        ) : (
+                                                            <span className="font-bold text-gray-900">
+                                                                {product.price === 0 ? <span className="text-green-600">Free</span> : `₹${product.price}`}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full text-xs font-bold">
+                                                        {product.category || 'Uncategorized'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <button
+                                                        onClick={() => handleDeleteProduct(product._id)}
+                                                        className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-full transition-colors"
+                                                        title="Delete Product"
+                                                    >
+                                                        <LuTrash2 />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Mobile Card View */}
+                        <div className="sm:hidden">
+                            {productLoading ? (
+                                <div className="p-8 text-center text-gray-500">
+                                    <div className="flex justify-center items-center gap-2">
+                                        <FaSpinner className="animate-spin" /> Loading...
+                                    </div>
+                                </div>
+                            ) : products.length === 0 ? (
+                                <div className="p-8 text-center text-gray-500">No products found.</div>
+                            ) : (
+                                <div className="divide-y divide-gray-100">
+                                    {products.map((product) => (
+                                        <div key={product._id} className="p-4 flex gap-4">
+                                            {/* Thumbnail */}
+                                            <div className="w-20 h-20 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex-shrink-0">
+                                                {product.thumbnail && product.thumbnail.googleDriveId ? (
+                                                    <img
+                                                        src={`${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${product.thumbnail.googleDriveId}`}
+                                                        alt={product.title}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No Img</div>
+                                                )}
+                                            </div>
+
+                                            {/* Content */}
+                                            <div className="flex-1 min-w-0 flex flex-col justify-between">
+                                                <div>
+                                                    <div className="flex justify-between items-start gap-2">
+                                                        <Link to={`/product/${product._id}`} className="font-bold text-gray-900 text-sm hover:text-indigo-600 line-clamp-2">
+                                                            {product.title}
+                                                        </Link>
+                                                        <button
+                                                            onClick={() => handleDeleteProduct(product._id)}
+                                                            className="text-gray-400 hover:text-red-500 p-1 -mt-1 -mr-1 transition-colors"
+                                                        >
+                                                            <LuTrash2 className="w-5 h-5" />
+                                                        </button>
+                                                    </div>
+                                                    <div className="text-xs text-gray-500 mt-0.5">{product.fileType} • {product.version}</div>
+                                                </div>
+
+                                                <div className="flex items-end justify-between mt-2">
+                                                    <div>
+                                                        {product.salePrice && product.salePrice < product.price ? (
+                                                            <div className="flex items-baseline gap-1.5">
+                                                                <span className="font-bold text-green-600">₹{product.salePrice}</span>
+                                                                <span className="text-xs text-gray-400 line-through">₹{product.price}</span>
+                                                            </div>
+                                                        ) : (
+                                                            <span className="font-bold text-gray-900">
+                                                                {product.price === 0 ? <span className="text-green-600">Free</span> : `₹${product.price}`}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <span className="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">
+                                                        {product.category || 'Uncat'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Pagination */}
+                    {productTotalPages > 1 && (
+                        <div className="flex justify-center gap-2">
+                            <button
+                                onClick={() => setProductPage(p => Math.max(1, p - 1))}
+                                disabled={productPage === 1}
+                                className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 hover:bg-gray-50"
+                            >
+                                Previous
+                            </button>
+                            <span className="px-4 py-2 text-gray-600 font-medium">
+                                Page {productPage} of {productTotalPages}
+                            </span>
+                            <button
+                                onClick={() => setProductPage(p => Math.min(productTotalPages, p + 1))}
+                                disabled={productPage === productTotalPages}
+                                className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 hover:bg-gray-50"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    )}
+                </div>
+            )}
 
             {activeTab === 'upload' && (
                 <div className="max-w-3xl mx-auto">
@@ -107,186 +339,106 @@ const AdminDashboard = ({ adminPassword }) => {
                 </div>
             )}
 
-            {activeTab === 'products' && (
-                <div className="bg-white rounded-lg shadow overflow-hidden p-3 sm:p-6">
-                    {/* Filters */}
-                    <div className="flex flex-col sm:flex-row gap-3 mb-4 sm:mb-6 justify-between items-stretch sm:items-center">
-                        <div className="w-full sm:w-1/3">
-                            <input
-                                type="text"
-                                placeholder="Search by name..."
-                                value={productSearch}
-                                onChange={(e) => {
-                                    setProductSearch(e.target.value);
-                                    setProductPage(1);
+            {activeTab === 'coupons' && (
+                <div className="max-w-4xl mx-auto space-y-6">
+                    {/* Add Coupon Form */}
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h2 className="text-lg font-bold text-gray-800 mb-4">Add New Coupon</h2>
+                        <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-end">
+                            <div className="flex-1">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Coupon Code</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. SUMMER50"
+                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm uppercase font-mono"
+                                    id="newCouponCode"
+                                />
+                            </div>
+                            <div className="w-full sm:w-32">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Discount (%)</label>
+                                <input
+                                    type="number"
+                                    placeholder="0-50"
+                                    min="0"
+                                    max="50"
+                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                                    id="newCouponPercent"
+                                />
+                            </div>
+                            <button
+                                onClick={async () => {
+                                    const code = document.getElementById('newCouponCode').value;
+                                    const percent = document.getElementById('newCouponPercent').value;
+                                    if (!code || !percent) return alert("Please fill all fields");
+                                    if (percent > 50) return alert("Discount cannot exceed 50%");
+
+                                    try {
+                                        await api.post('/api/coupons', { code, discountPercent: percent }, {
+                                            headers: { 'x-admin-password': adminPassword }
+                                        });
+                                        alert("Coupon Created!");
+                                        document.getElementById('newCouponCode').value = '';
+                                        document.getElementById('newCouponPercent').value = '';
+                                        fetchCoupons(); // Refresh list
+                                    } catch (err) {
+                                        alert(err.response?.data?.msg || "Failed to create coupon");
+                                    }
                                 }}
-                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            />
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <label className="text-xs sm:text-sm font-medium text-gray-700">Sort By:</label>
-                            <select
-                                value={productSort}
-                                onChange={(e) => setProductSort(e.target.value)}
-                                className="border border-gray-300 rounded-lg px-2 sm:px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                                className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-indigo-700 transition"
                             >
-                                <option value="newest">Newest First</option>
-                                <option value="oldest">Oldest First</option>
-                            </select>
+                                Add Coupon
+                            </button>
                         </div>
                     </div>
 
-                    {/* ── MOBILE CARDS (sm and below) ── */}
-                    <div className="block md:hidden space-y-3">
-                        {productLoading ? (
-                            <div className="py-10 text-center"><FaSpinner className="animate-spin inline mr-2" /> Loading...</div>
-                        ) : products.length === 0 ? (
-                            <div className="py-10 text-center text-gray-500">No products found.</div>
+                    {/* Coupons List */}
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                            <h2 className="text-lg font-bold text-gray-800">Active Coupons</h2>
+                            <button onClick={fetchCoupons} className="text-sm text-indigo-600 hover:underline">Refresh</button>
+                        </div>
+
+                        {loading ? (
+                            <div className="p-8 text-center"><FaSpinner className="animate-spin inline mr-2" /> Loading...</div>
+                        ) : coupons.length === 0 ? (
+                            <div className="p-8 text-center text-gray-500">No coupons found.</div>
                         ) : (
-                            products.map(p => (
-                                <div key={p._id} className="border border-gray-200 rounded-xl p-3 shadow-sm">
-                                    <div className="flex items-start gap-3">
-                                        {/* Thumbnail */}
-                                        <div className="h-16 w-16 rounded-lg overflow-hidden bg-gray-100 flex-none">
-                                            {p.thumbnail?.viewLink ? (
-                                                <img src={`https://lh3.googleusercontent.com/d/${p.thumbnail.googleDriveId}`} alt="" className="h-full w-full object-cover" />
-                                            ) : (
-                                                <div className="h-full w-full flex items-center justify-center text-[10px] text-gray-400">No Img</div>
-                                            )}
+                            <div className="divide-y divide-gray-100">
+                                {coupons.map(coupon => (
+                                    <div key={coupon._id} className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 hover:bg-gray-50 transition">
+                                        <div>
+                                            <p className="font-mono font-bold text-lg text-indigo-700 tracking-wider">{coupon.code}</p>
+                                            <p className="text-xs text-gray-500">Created: {new Date(coupon.createdAt).toLocaleDateString()}</p>
                                         </div>
-                                        {/* Info */}
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-[13px] font-bold text-gray-900 leading-tight" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.title}</p>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                {p.salePrice ? (
-                                                    <>
-                                                        <span className="font-bold text-green-600 text-sm">₹{p.salePrice}</span>
-                                                        <span className="text-gray-400 line-through text-xs">₹{p.price}</span>
-                                                    </>
-                                                ) : (
-                                                    <span className="font-bold text-gray-800 text-sm">₹{p.price}</span>
-                                                )}
-                                            </div>
-                                            <div className="flex flex-wrap items-center gap-1.5 mt-1">
-                                                <span className="bg-gray-100 px-1.5 py-0.5 rounded text-[10px] font-mono text-gray-600">{p.fileType}</span>
-                                                {p.version && <span className="text-[10px] text-gray-400">v{p.version}</span>}
-                                                {p.fontsIncluded === 'Yes' && (
-                                                    <span className="text-green-600 font-bold text-[10px] bg-green-50 px-1.5 py-0.5 rounded-full"><FaCheck className="inline mr-0.5 w-2 h-2" />Fonts</span>
-                                                )}
-                                                {p.rating > 0 ? (
-                                                    <span className="text-amber-500 font-bold text-[10px]">★ {p.rating.toFixed(1)}</span>
-                                                ) : (
-                                                    <span className="text-gray-300 text-[10px]">No rating</span>
-                                                )}
-                                            </div>
+                                        <div className="flex items-center justify-between w-full sm:w-auto gap-6 sm:justify-start">
+                                            <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
+                                                {coupon.discountPercent}% OFF
+                                            </span>
+                                            <button
+                                                onClick={async () => {
+                                                    if (!confirm("Delete this coupon?")) return;
+                                                    try {
+                                                        await api.delete(`/api/coupons/${coupon._id}`, {
+                                                            headers: { 'x-admin-password': adminPassword }
+                                                        });
+                                                        setCoupons(coupons.filter(c => c._id !== coupon._id));
+                                                    } catch (err) {
+                                                        alert("Failed to delete");
+                                                    }
+                                                }}
+                                                className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-full transition"
+                                                title="Delete Coupon"
+                                            >
+                                                <LuTrash2 />
+                                            </button>
                                         </div>
                                     </div>
-                                    {/* Delete — full-width bottom button */}
-                                    <div className="mt-2 pt-2 border-t border-gray-100 flex justify-end">
-                                        <button
-                                            onClick={() => handleDeleteProduct(p._id)}
-                                            className="flex items-center gap-1.5 text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors"
-                                        >
-                                            <LuTrash2 className="w-4 h-4" /> Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            ))
+                                ))}
+                            </div>
                         )}
-                    </div>
-
-                    {/* ── DESKTOP TABLE (md and above) ── */}
-                    <div className="hidden md:block overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Image</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Name</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Price</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Type / Ver</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Fonts Included</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Rating</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {productLoading ? (
-                                    <tr><td colSpan="7" className="py-10 text-center"><FaSpinner className="animate-spin inline mr-2" /> Loading...</td></tr>
-                                ) : products.length === 0 ? (
-                                    <tr><td colSpan="7" className="py-10 text-center text-gray-500">No products found.</td></tr>
-                                ) : (
-                                    products.map(p => (
-                                        <tr key={p._id} className="hover:bg-gray-50">
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="h-10 w-10 rounded overflow-hidden bg-gray-100">
-                                                    {p.thumbnail?.viewLink ? (
-                                                        <img src={`https://lh3.googleusercontent.com/d/${p.thumbnail.googleDriveId}`} alt="" className="h-full w-full object-cover" />
-                                                    ) : (
-                                                        <div className="h-full w-full flex items-center justify-center text-xs text-gray-400">No Img</div>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{p.title}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                                {p.salePrice ? (
-                                                    <div>
-                                                        <span className="font-bold text-green-600">₹{p.salePrice}</span>
-                                                        <span className="text-gray-400 line-through text-xs ml-2">₹{p.price}</span>
-                                                    </div>
-                                                ) : (
-                                                    <span>₹{p.price}</span>
-                                                )}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                <span className="bg-gray-100 px-2 py-1 rounded text-xs font-mono">{p.fileType}</span>
-                                                {p.version && <span className="ml-2 text-xs text-gray-400">v{p.version}</span>}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {p.fontsIncluded === 'Yes' ? (
-                                                    <span className="text-green-600 font-bold text-xs bg-green-50 px-2 py-1 rounded-full"><FaCheck className="inline mr-1" /> Yes</span>
-                                                ) : (
-                                                    <span className="text-gray-400 text-xs">-</span>
-                                                )}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-amber-500 font-bold">
-                                                {p.rating > 0 ? `★ ${p.rating.toFixed(1)}` : <span className="text-gray-300 font-normal">No ratings</span>}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button
-                                                    onClick={() => handleDeleteProduct(p._id)}
-                                                    className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1 rounded transition-colors"
-                                                >
-                                                    Delete
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* Pagination */}
-                    <div className="mt-3 sm:mt-4 flex justify-between items-center bg-gray-50 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg">
-                        <button
-                            disabled={productPage === 1}
-                            onClick={() => setProductPage(p => Math.max(1, p - 1))}
-                            className={`px-2.5 sm:px-3 py-1 rounded border text-xs sm:text-sm ${productPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white hover:bg-gray-50 text-gray-700'}`}
-                        >
-                            ← Prev
-                        </button>
-                        <span className="text-xs sm:text-sm text-gray-600">{productPage} / {productTotalPages}</span>
-                        <button
-                            disabled={productPage === productTotalPages}
-                            onClick={() => setProductPage(p => Math.min(productTotalPages, p + 1))}
-                            className={`px-2.5 sm:px-3 py-1 rounded border text-xs sm:text-sm ${productPage === productTotalPages ? 'bg-gray-100 text-gray-400' : 'bg-white hover:bg-gray-50 text-gray-700'}`}
-                        >
-                            Next →
-                        </button>
                     </div>
                 </div>
             )}
-
 
         </div>
     );

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import { LuUser, LuShoppingCart, LuLogOut, LuShieldCheck, LuRocket, LuMenu, LuX, LuHouse, LuPercent } from 'react-icons/lu';
+import { useLanguage } from './context/LanguageContext';
 import FileList from './components/FileList';
 import AdminLogin from './components/AdminLogin';
 import ProductPage from './pages/ProductPage';
@@ -97,6 +98,7 @@ import MyOrdersPage from './pages/MyOrdersPage';
 function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLoginOpen, handleUserLogout, handleAdminLogout, handleAdminLogin, adminPassword }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { t, language, toggleLanguage } = useLanguage();
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 flex flex-col transition-colors duration-300">
@@ -109,7 +111,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
       </div>
 
       <nav className="fixed w-full top-0 z-50 glass border-b border-white/40 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-14 items-center">
             {/* Logo Area */}
             <Link to="/" className="group flex items-center gap-3 hover:opacity-90 transition">
@@ -131,11 +133,21 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
             </div>
 
             <div className="hidden md:flex items-center gap-4 sm:gap-6">
-
+              {/* Language Toggle (Desktop) */}
+              <button
+                onClick={toggleLanguage}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all"
+                title={t('switchLanguage')}
+              >
+                <div className="w-4 h-4 rounded-full bg-slate-300 flex items-center justify-center text-[8px] overflow-hidden">
+                  {language === 'en' ? 'EN' : 'HI'}
+                </div>
+                <span>{language === 'en' ? 'हिन्दी' : 'English'}</span>
+              </button>
 
               {/* Cart Link (Protected) */}
               {token && (
-                <Link to="/cart" className="relative group p-2 rounded-full hover:bg-slate-100 transition-colors" title="View Cart">
+                <Link to="/cart" className="relative group p-2 rounded-full hover:bg-slate-100 transition-colors" title={t('viewCart')}>
                   <LuShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-600 group-hover:text-indigo-600 transition-colors" />
                   {/* Add Badge here if needed */}
                 </Link>
@@ -149,19 +161,28 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                   to="/login"
                   className="px-6 py-2.5 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
                 >
-                  Login
+                  {t('login')}
                 </Link>
               ) : (
-                <Link
-                  to="/my-orders"
-                  className="flex items-center gap-2 p-1.5 pr-3 rounded-full hover:bg-slate-100 transition-colors focus:outline-none border border-transparent hover:border-slate-200"
-                  title="My Downloads & Orders"
-                >
-                  <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100">
-                    <LuUser className="w-4 h-4" />
-                  </div>
-                  <span className="text-sm font-medium text-slate-700 hidden lg:block">My Account</span>
-                </Link>
+                <>
+                  <Link
+                    to="/my-orders"
+                    className="flex items-center gap-2 p-1.5 pr-3 rounded-full hover:bg-slate-100 transition-colors focus:outline-none border border-transparent hover:border-slate-200"
+                    title={t('myDownloadsOrders')}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100">
+                      <LuUser className="w-4 h-4" />
+                    </div>
+                    <span className="text-sm font-medium text-slate-700 hidden lg:block">{t('myAccount')}</span>
+                  </Link>
+                  <button
+                    onClick={handleUserLogout}
+                    className="p-2 rounded-full hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors ml-1"
+                    title={t('logout')}
+                  >
+                    <LuLogOut className="w-5 h-5" />
+                  </button>
+                </>
               )}
 
               {/* Admin Auth */}
@@ -169,7 +190,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                 <button
                   onClick={() => setIsLoginOpen(true)}
                   className="text-slate-400 hover:text-indigo-600 transition-colors p-2"
-                  title="Admin Access"
+                  title={t('adminAccess')}
                 >
                   <LuShieldCheck className="w-5 h-5" />
                 </button>
@@ -184,7 +205,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                   <button
                     onClick={handleAdminLogout}
                     className="text-slate-400 hover:text-red-500 transition-colors p-2"
-                    title="Admin Logout"
+                    title={t('adminLogout')}
                   >
                     <LuLogOut className="w-4 h-4" />
                   </button>
@@ -194,6 +215,14 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
 
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center">
+              {/* Language Toggle (Mobile) */}
+              <button
+                onClick={toggleLanguage}
+                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-700 mr-2"
+                title={t('switchLanguage')}
+              >
+                {language === 'en' ? 'HI' : 'EN'}
+              </button>
               <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-slate-600 hover:text-indigo-600 focus:outline-none p-2">
                 {isMobileMenuOpen ? <LuX className="w-6 h-6" /> : <LuMenu className="w-6 h-6" />}
               </button>
@@ -212,7 +241,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                 <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-indigo-600 shadow-sm">
                   <LuShoppingCart className="w-4 h-4" />
                 </div>
-                <span className="font-semibold text-slate-700">My Cart</span>
+                <span className="font-semibold text-slate-700">{t('myCart')}</span>
               </Link>
             )}
 
@@ -225,7 +254,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                 className="flex justify-center w-full px-6 py-3 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Login / Register
+                {t('loginRegister')}
               </Link>
             ) : (
               <>
@@ -237,7 +266,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                   <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
                     <LuUser />
                   </div>
-                  <span className="font-medium text-slate-700">My Orders</span>
+                  <span className="font-medium text-slate-700">{t('myOrders')}</span>
                 </Link>
 
                 <button
@@ -247,7 +276,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                   <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500">
                     <LuLogOut className="w-4 h-4" />
                   </div>
-                  Logout
+                  {t('logout')}
                 </button>
               </>
             )}
@@ -259,23 +288,23 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                   onClick={() => { setIsLoginOpen(true); setIsMobileMenuOpen(false); }}
                   className="flex items-center gap-2 w-full text-left text-slate-400 hover:text-indigo-600 p-2 rounded-lg transition-colors text-xs font-semibold uppercase tracking-wider"
                 >
-                  <LuShieldCheck className="w-4 h-4" /> Admin Access
+                  <LuShieldCheck className="w-4 h-4" /> {t('adminAccess')}
                 </button>
               ) : (
                 <div className="bg-slate-50 rounded-xl p-3 flex flex-col gap-2">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Admin Controls</p>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{t('adminControls')}</p>
                   <Link
                     to="/admin"
                     className="flex items-center gap-2 bg-white border border-indigo-100 text-indigo-700 px-4 py-2.5 rounded-lg text-sm font-bold hover:bg-indigo-50 transition-all justify-center shadow-sm"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <LuRocket className="w-4 h-4 text-indigo-500" /> Open Admin Panel
+                    <LuRocket className="w-4 h-4 text-indigo-500" /> {t('adminPanel')}
                   </Link>
                   <button
                     onClick={() => { handleAdminLogout(); setIsMobileMenuOpen(false); }}
                     className="flex items-center gap-2 w-full justify-center text-slate-500 hover:text-red-600 p-2 rounded-lg transition-colors text-xs font-medium"
                   >
-                    <LuLogOut className="w-3 h-3" /> Admin Logout
+                    <LuLogOut className="w-3 h-3" /> {t('adminLogout')}
                   </button>
                 </div>
               )}
@@ -334,7 +363,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
               }`}
           >
             <LuHouse className={`w-5 h-5 ${location.pathname === '/' ? 'text-indigo-600' : ''}`} />
-            <span className={`text-[10px] font-bold ${location.pathname === '/' ? 'text-indigo-600' : ''}`}>Home</span>
+            <span className={`text-[10px] font-bold ${location.pathname === '/' ? 'text-indigo-600' : ''}`}>{t('home')}</span>
           </Link>
 
           {/* Top Deals */}
@@ -345,7 +374,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
             <div className="relative">
               <LuPercent className="w-5 h-5" />
             </div>
-            <span className="text-[10px] font-bold">Top Deals</span>
+            <span className="text-[10px] font-bold">{t('topDeals')}</span>
           </Link>
 
           {/* Account */}
@@ -355,7 +384,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
               }`}
           >
             <LuUser className={`w-5 h-5 ${location.pathname === '/my-orders' || location.pathname === '/login' ? 'text-indigo-600' : ''}`} />
-            <span className={`text-[10px] font-bold ${location.pathname === '/my-orders' || location.pathname === '/login' ? 'text-indigo-600' : ''}`}>Account</span>
+            <span className={`text-[10px] font-bold ${location.pathname === '/my-orders' || location.pathname === '/login' ? 'text-indigo-600' : ''}`}>{t('account')}</span>
           </Link>
 
           {/* Cart */}
@@ -367,7 +396,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
             <div className="relative">
               <LuShoppingCart className={`w-5 h-5 ${location.pathname === '/cart' ? 'text-indigo-600' : ''}`} />
             </div>
-            <span className={`text-[10px] font-bold ${location.pathname === '/cart' ? 'text-indigo-600' : ''}`}>Cart</span>
+            <span className={`text-[10px] font-bold ${location.pathname === '/cart' ? 'text-indigo-600' : ''}`}>{t('cart')}</span>
           </Link>
         </div>
       </div>

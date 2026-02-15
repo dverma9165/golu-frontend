@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import api from '../services/api';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaEnvelope, FaPhone, FaLock, FaUserPlus, FaShieldAlt, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useLanguage } from '../context/LanguageContext';
 
 const Register = () => {
+    const { t } = useLanguage();
     const [step, setStep] = useState(1);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -26,7 +28,7 @@ const Register = () => {
             setStep(2);
         } catch (err) {
             console.error("Registration Error:", err);
-            const errorMsg = err.response?.data?.msg || err.message || 'Registration failed';
+            const errorMsg = err.response?.data?.msg || err.message || t('registrationFailed');
             setError(errorMsg);
         } finally {
             setLoading(false);
@@ -42,7 +44,7 @@ const Register = () => {
             localStorage.setItem('token', res.data.token);
             window.location.href = '/';
         } catch (err) {
-            setError(err.response?.data?.msg || 'Verification failed');
+            setError(err.response?.data?.msg || t('verificationFailed'));
         } finally {
             setLoading(false);
         }
@@ -74,10 +76,10 @@ const Register = () => {
                     </div>
 
                     <h2 className="text-center text-xl font-bold text-gray-800 mb-1">
-                        {step === 1 ? 'Create Account' : 'Verify Email'}
+                        {step === 1 ? t('createAccount') : t('verifyEmail')}
                     </h2>
                     <p className="text-center text-xs text-gray-400 mb-5">
-                        {step === 1 ? 'Fill in your details to get started' : 'Enter the OTP sent to your email'}
+                        {step === 1 ? t('fillDetails') : t('enterOtp')}
                     </p>
 
                     {step === 1 && (
@@ -88,7 +90,7 @@ const Register = () => {
                                 <input
                                     type="text" required
                                     className="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder-gray-400"
-                                    placeholder="Full Name"
+                                    placeholder={t('fullName')}
                                     value={name} onChange={e => setName(e.target.value)}
                                 />
                             </div>
@@ -99,7 +101,7 @@ const Register = () => {
                                 <input
                                     type="email" required
                                     className="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder-gray-400"
-                                    placeholder="Email address"
+                                    placeholder={t('emailAddress')}
                                     value={email} onChange={e => setEmail(e.target.value)}
                                 />
                             </div>
@@ -110,7 +112,7 @@ const Register = () => {
                                 <input
                                     type="tel" required
                                     className="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder-gray-400"
-                                    placeholder="Phone Number"
+                                    placeholder={t('phoneNumber')}
                                     value={phone} onChange={e => setPhone(e.target.value)}
                                 />
                             </div>
@@ -121,7 +123,7 @@ const Register = () => {
                                 <input
                                     type={showPassword ? 'text' : 'password'} required
                                     className="w-full pl-10 pr-10 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder-gray-400"
-                                    placeholder="Password"
+                                    placeholder={t('password')}
                                     value={password} onChange={e => setPassword(e.target.value)}
                                 />
                                 <button type="button" onClick={() => setShowPassword(!showPassword)}
@@ -146,14 +148,14 @@ const Register = () => {
                                 ) : (
                                     <>
                                         <FaUserPlus className="w-4 h-4" />
-                                        Send OTP
+                                        {t('sendOtp')}
                                     </>
                                 )}
                             </button>
 
                             <div className="text-center pt-1">
                                 <Link to="/login" className="text-xs text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
-                                    Already have an account? <span className="font-bold">Sign In</span>
+                                    {t('alreadyHaveAccount')} <span className="font-bold">{t('signIn')}</span>
                                 </Link>
                             </div>
                         </form>
@@ -164,7 +166,7 @@ const Register = () => {
                             {/* OTP Info */}
                             <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-3 text-center">
                                 <FaShieldAlt className="w-6 h-6 text-indigo-500 mx-auto mb-1" />
-                                <p className="text-xs text-indigo-600 font-medium">OTP sent to <span className="font-bold">{email}</span></p>
+                                <p className="text-xs text-indigo-600 font-medium">{t('otpSentTo')} <span className="font-bold">{email}</span></p>
                             </div>
 
                             {/* OTP Input */}
@@ -195,7 +197,7 @@ const Register = () => {
                                 ) : (
                                     <>
                                         <FaShieldAlt className="w-4 h-4" />
-                                        Verify & Login
+                                        {t('verifyLogin')}
                                     </>
                                 )}
                             </button>

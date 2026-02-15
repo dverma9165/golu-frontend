@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { FaDownload, FaSpinner, FaChevronLeft, FaChevronRight, FaPen, FaFileAlt, FaFilePdf, FaFileExcel, FaFileImage } from 'react-icons/fa';
 import ReviewModal from '../components/ReviewModal';
+import { useLanguage } from '../context/LanguageContext';
 
 const MyOrdersPage = () => {
+    const { t } = useLanguage();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
@@ -27,6 +29,7 @@ const MyOrdersPage = () => {
             setPage(pageNum);
         } catch (err) {
             console.error("Failed to fetch orders", err);
+            // alert(t('fetchOrdersFailed')); // Optional: show error to user
         } finally {
             setLoading(false);
         }
@@ -39,11 +42,11 @@ const MyOrdersPage = () => {
             if (res.data.downloadLink) {
                 window.open(res.data.downloadLink, '_blank');
             } else {
-                alert(res.data.msg || "Download not available");
+                alert(res.data.msg || t('downloadNotAvailable'));
             }
         } catch (err) {
             console.error(err);
-            alert("Download failed");
+            alert(t('downloadFailed'));
         }
     };
 
@@ -63,7 +66,7 @@ const MyOrdersPage = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-8 font-display">My Downloads & Orders</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-8 font-display">{t('myDownloadsOrders')}</h1>
 
             <div className="min-h-[500px]">
                 {loading ? (
@@ -72,7 +75,7 @@ const MyOrdersPage = () => {
                     </div>
                 ) : (orders || []).length === 0 ? (
                     <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
-                        <p className="text-gray-500 text-lg">No orders found.</p>
+                        <p className="text-gray-500 text-lg">{t('noOrdersFound')}</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -87,8 +90,8 @@ const MyOrdersPage = () => {
                             const discountPercent = hasDiscount ? Math.round(((price - salePrice) / price) * 100) : 0;
 
                             // Thumbnail Logic
-                            const thumbnailLink = product.thumbnail?.viewLink
-                                ? `https://lh3.googleusercontent.com/d/${product.thumbnail.googleDriveId}`
+                            const thumbnailLink = product.thumbnail?.googleDriveId
+                                ? `${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${product.thumbnail.googleDriveId}`
                                 : null;
 
                             return (
@@ -104,15 +107,15 @@ const MyOrdersPage = () => {
                                         ) : (
                                             <div className="flex flex-col items-center gap-2">
                                                 {getFileIcon(product.thumbnail?.mimeType || product.mimeType)}
-                                                <span className="text-xs text-gray-400 font-medium">No Preview</span>
+                                                <span className="text-xs text-gray-400 font-medium">{t('noPreview')}</span>
                                             </div>
                                         )}
 
                                         {/* Status Badge Over Image */}
                                         <div className="absolute top-4 right-4">
                                             <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm ${order.status === 'Approved' ? 'bg-green-100 text-green-700' :
-                                                    order.status === 'Rejected' ? 'bg-red-100 text-red-700' :
-                                                        'bg-yellow-100 text-yellow-700'
+                                                order.status === 'Rejected' ? 'bg-red-100 text-red-700' :
+                                                    'bg-yellow-100 text-yellow-700'
                                                 }`}>
                                                 {order.status}
                                             </span>
@@ -121,7 +124,7 @@ const MyOrdersPage = () => {
 
                                     <div className="p-6 flex-1 flex flex-col">
                                         <div className="flex justify-between items-start mb-1">
-                                            <p className="text-[10px] text-gray-400 font-mono tracking-wider">ORDER #{order._id.slice(-6).toUpperCase()}</p>
+                                            <p className="text-[10px] text-gray-400 font-mono tracking-wider">{t('orderNumber')} {order._id.slice(-6).toUpperCase()}</p>
                                         </div>
 
                                         <h3 className="font-bold text-lg text-slate-800 line-clamp-1 mb-2 group-hover:text-indigo-600 transition-colors" title={product.title}>
@@ -130,7 +133,7 @@ const MyOrdersPage = () => {
 
                                         {/* Description */}
                                         <p className="text-xs text-gray-500 line-clamp-2 mb-4 leading-relaxed">
-                                            {product.description || "No description available."}
+                                            {product.description || t('noDescription')}
                                         </p>
 
                                         {/* Price */}
@@ -140,7 +143,7 @@ const MyOrdersPage = () => {
                                                     <span className="font-extrabold text-xl text-slate-900">₹{salePrice}</span>
                                                     <span className="text-sm text-gray-400 line-through">₹{price}</span>
                                                     <span className="text-[10px] font-bold text-white bg-green-500 px-2 py-0.5 rounded-md">
-                                                        {discountPercent}% OFF
+                                                        {discountPercent}{t('off')}
                                                     </span>
                                                 </>
                                             ) : (
@@ -156,24 +159,24 @@ const MyOrdersPage = () => {
                                                         onClick={() => openReviewModal(product)}
                                                         className="col-span-1 bg-white border-2 border-slate-100 hover:border-indigo-100 hover:bg-slate-50 text-slate-600 text-xs font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2"
                                                     >
-                                                        <FaPen className="w-3 h-3" /> Review
+                                                        <FaPen className="w-3 h-3" /> {t('reviewBtn')}
                                                     </button>
                                                     <button
                                                         onClick={() => handleDownload(order._id, order.status)}
                                                         className="col-span-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-200 flex items-center justify-center gap-2"
                                                     >
-                                                        <FaDownload className="w-3 h-3" /> Download
+                                                        <FaDownload className="w-3 h-3" /> {t('downloadBtn')}
                                                     </button>
                                                 </>
                                             ) : (
                                                 <div className="col-span-2 text-center text-xs text-gray-400 font-medium py-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                                                    {order.status === 'Rejected' ? 'Order Rejected' : 'Approval Pending'}
+                                                    {order.status === 'Rejected' ? t('orderRejected') : t('approvalPending')}
                                                 </div>
                                             )}
                                         </div>
 
                                         {order.status === 'Approved' && (
-                                            <p className="text-[10px] text-center text-gray-400 mt-3">Link expires in 72 hours</p>
+                                            <p className="text-[10px] text-center text-gray-400 mt-3">{t('linkExpires')}</p>
                                         )}
                                     </div>
                                 </div>
@@ -194,7 +197,7 @@ const MyOrdersPage = () => {
                         <FaChevronLeft className="w-4 h-4 text-gray-600" />
                     </button>
                     <span className="font-bold text-gray-600">
-                        Page {page} of {totalPages}
+                        {t('page')} {page} {t('of')} {totalPages}
                     </span>
                     <button
                         onClick={() => fetchOrders(page + 1)}

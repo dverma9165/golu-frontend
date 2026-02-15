@@ -123,7 +123,7 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
       return;
     }
 
-    if (salePrice && parseFloat(salePrice) >= parseFloat(price)) {
+    if (salePrice && parseFloat(salePrice) >= parseFloat(price) && parseFloat(price) !== 0) {
       setMessage('Sale Price must be less than Regular Price.');
       return;
     }
@@ -204,15 +204,43 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700">Category</label>
               <select value={category} onChange={e => setCategory(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500">
-                {['Wedding Card', 'Visiting Card', 'Invitation Card', 'Birthday Banner', 'Festival Post', 'Political Banner', 'Business Flyer', 'Social Media Post', 'Logo Design', 'Letterhead', 'Bill Book', 'Pamphlet', 'Brochure', 'Menu Card', 'Certificate', 'Resume/CV', 'Calendar', 'Sticker/Label', 'Envelope', 'ID Card', 'Poster', 'Thumbnail', 'Web Banner', 'Infographic', 'Presentation', 'E-Book Cover', 'T-Shirt Design', 'Mug Design', 'Standee', 'Flex Banner', 'Other'].map(cat => (
+                {['Wedding Card', 'Visiting Card', 'Invitation Card', 'Birthday Banner', 'Festival Post', 'Political Banner', 'Business Flyer', 'Social Media Post', 'Logo Design', 'Letterhead', 'Bill Book', 'Pamphlet', 'Brochure', 'Menu Card', 'Certificate', 'Resume/CV', 'Calendar', 'Calendar Design', 'Sticker/Label', 'Envelope', 'ID Card', 'Poster', 'Thumbnail', 'Web Banner', 'Infographic', 'Presentation', 'E-Book Cover', 'T-Shirt Design', 'Mug Design', 'Standee', 'Flex Banner', 'Other'].map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>
             </div>
 
+            <div className="flex items-center">
+              <input
+                id="freeProduct"
+                type="checkbox"
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setPrice('0');
+                    setSalePrice('0');
+                  } else {
+                    setPrice('');
+                    setSalePrice('');
+                  }
+                }}
+              />
+              <label htmlFor="freeProduct" className="ml-2 block text-sm text-gray-900 font-bold">
+                Free Product (Zero Price)
+              </label>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700">Regular Price (Higher MRP) *</label>
-              <input type="number" value={price} onChange={e => setPrice(e.target.value)} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. 500" />
+              <input
+                type="number"
+                value={price}
+                onChange={e => setPrice(e.target.value)}
+                required
+                disabled={price === '0' && salePrice === '0'}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
+                placeholder="e.g. 500"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Sale Price (Selling Amount) *</label>
@@ -221,10 +249,11 @@ const FileUpload = ({ onUploadSuccess, adminPassword }) => {
                 value={salePrice}
                 onChange={e => setSalePrice(e.target.value)}
                 required
-                className={`mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 ${parseFloat(salePrice) >= parseFloat(price) ? 'border-red-300 focus:border-red-500' : 'border-gray-300'}`}
+                disabled={price === '0' && salePrice === '0'}
+                className={`mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 ${parseFloat(salePrice) >= parseFloat(price) && price !== '0' ? 'border-red-300 focus:border-red-500' : 'border-gray-300'}`}
                 placeholder="e.g. 200"
               />
-              {parseFloat(salePrice) >= parseFloat(price) && (
+              {parseFloat(salePrice) >= parseFloat(price) && price !== '0' && (
                 <p className="text-xs text-red-500 mt-1">Sale price must be less than Regular Price.</p>
               )}
             </div>

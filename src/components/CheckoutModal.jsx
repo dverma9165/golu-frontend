@@ -11,20 +11,26 @@ const CheckoutModal = ({ isOpen, onClose, product, totalAmount, cartItems, onSuc
 
     // Coupon State
     const [couponCode, setCouponCode] = useState('');
+    const [discountPercent, setDiscountPercent] = useState(0);
     const [discountApplied, setDiscountApplied] = useState(false);
     const [discountMessage, setDiscountMessage] = useState('');
 
     // Determine amount to pay
     const baseAmount = totalAmount || (product ? (product.salePrice && product.salePrice < product.price ? product.salePrice : product.price) : 0);
-    const amountToPay = discountApplied ? Math.max(1, Math.round(baseAmount * 0.75)) : baseAmount;
+    const amountToPay = discountApplied ? Math.max(1, Math.round(baseAmount * (1 - discountPercent / 100))) : baseAmount;
 
-    const applyCoupon = () => {
-        if (couponCode.trim().toUpperCase() === 'DIKSHA99') {
+    const applyCoupon = async () => {
+        if (!couponCode) return;
+        setDiscountMessage('');
+        try {
+            const res = await api.post('/api/coupons/validate', { code: couponCode });
             setDiscountApplied(true);
-            setDiscountMessage('Coupon Applied! 25% Off');
-        } else {
+            setDiscountPercent(res.data.discountPercent);
+            setDiscountMessage(res.data.msg);
+        } catch (err) {
             setDiscountApplied(false);
-            setDiscountMessage('Invalid Coupon Code');
+            setDiscountPercent(0);
+            setDiscountMessage(err.response?.data?.msg || 'Invalid Coupon Code');
         }
     };
 
@@ -41,13 +47,13 @@ const CheckoutModal = ({ isOpen, onClose, product, totalAmount, cartItems, onSuc
             if (product) {
                 orderPayload = {
                     productId: product._id,
-                    couponCode: discountApplied ? 'DIKSHA99' : ''
+                    couponCode: discountApplied ? couponCode : ''
                 };
             } else if (cartItems && cartItems.length > 0) {
                 // Send array of IDs
                 orderPayload = {
                     cartItems: cartItems.map(item => item.product._id),
-                    couponCode: discountApplied ? 'DIKSHA99' : ''
+                    couponCode: discountApplied ? couponCode : ''
                 };
             }
 
@@ -176,7 +182,7 @@ const CheckoutModal = ({ isOpen, onClose, product, totalAmount, cartItems, onSuc
                                     </h1>
                                     {discountApplied && (
                                         <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full border border-green-200">
-                                            🎉 25% Coupon Saving Applied!
+                                            🎉 {discountPercent}% Coupon Saving Applied!
                                         </span>
                                     )}
                                 </div>
@@ -187,13 +193,13 @@ const CheckoutModal = ({ isOpen, onClose, product, totalAmount, cartItems, onSuc
                                         <input
                                             type="text"
                                             placeholder="Have a coupon code?"
-                                            className="flex-1 px-4 py-3 text-sm font-medium text-gray-700 bg-white outline-none placeholder:text-gray-400 uppercase"
+                                            className="flex-1 min-w-0 px-4 py-3 text-sm font-medium text-gray-700 bg-white outline-none placeholder:text-gray-400 uppercase"
                                             value={couponCode}
                                             onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                                         />
                                         <button
                                             onClick={applyCoupon}
-                                            className="bg-gray-800 text-white px-6 py-2 text-sm font-bold hover:bg-gray-900 transition-colors"
+                                            className="bg-gray-800 text-white px-6 py-2 text-sm font-bold whitespace-nowrap shrink-0 hover:bg-gray-900 transition-colors"
                                         >
                                             APPLY
                                         </button>
@@ -209,8 +215,8 @@ const CheckoutModal = ({ isOpen, onClose, product, totalAmount, cartItems, onSuc
                                 {product && (
                                     <div className="w-full bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4 mb-8 text-left hover:border-blue-300 transition-colors">
                                         <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
-                                            {product.thumbnail?.viewLink ? (
-                                                <img src={`https://lh3.googleusercontent.com/d/${product.thumbnail.googleDriveId}`} className="w-full h-full object-cover" alt="" />
+                                            {product.thumbnail?.googleDriveId ? (
+                                                <img src={`${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${product.thumbnail.googleDriveId}`} className="w-full h-full object-cover" alt="" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No Img</div>
                                             )}
