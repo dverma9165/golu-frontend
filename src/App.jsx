@@ -103,27 +103,17 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 flex flex-col transition-colors duration-300">
 
-      {/* Abstract Background Shapes */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-200/30 rounded-full blur-[100px]" />
-        <div className="absolute top-[20%] right-[-5%] w-[30%] h-[30%] bg-blue-200/30 rounded-full blur-[100px]" />
-        <div className="absolute bottom-[-10%] left-[20%] w-[30%] h-[30%] bg-indigo-200/30 rounded-full blur-[100px]" />
-      </div>
-
-      <nav className="fixed w-full top-0 z-50 glass border-b border-white/40 transition-all duration-300">
+      <nav className="fixed w-full top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all duration-300">
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-14 items-center">
             {/* Logo Area */}
-            <Link to="/" className="group flex items-center gap-3 hover:opacity-90 transition">
-              <div className="relative">
-                <div className="absolute -inset-1 bg-linear-to-r from-indigo-500 to-purple-500 rounded-full blur opacity-25 group-hover:opacity-60 transition duration-200"></div>
-                <img src="/logo.png" alt="Diksha" className="relative w-9 h-9 rounded-full object-cover shadow-lg border-2 border-white/50" />
-              </div>
+            <Link to="/" className="group flex items-center gap-2.5 hover:opacity-80 transition">
+              <img src="/logo.png" alt="Diksha" className="w-8 h-8 rounded-full object-cover shadow-md border border-slate-200" />
               <div className="flex flex-col">
-                <span className="font-extrabold text-xl tracking-tight text-slate-800 leading-none hidden sm:block font-display">Diksha</span>
-                <span className="text-[9px] font-bold tracking-widest text-indigo-500 uppercase hidden sm:block">Design & Print</span>
+                <span className="font-bold text-lg tracking-tight text-slate-900 leading-none hidden sm:block">Diksha</span>
+                <span className="text-[8px] font-semibold tracking-widest text-indigo-600 uppercase hidden sm:block">Design & Print</span>
                 {/* Mobile Only Logo Text */}
-                <span className="font-extrabold text-lg tracking-tight text-slate-800 leading-none sm:hidden font-display">Diksha</span>
+                <span className="font-bold text-base tracking-tight text-slate-900 leading-none sm:hidden">Diksha</span>
               </div>
             </Link>
 
@@ -136,10 +126,10 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
               {/* Language Toggle (Desktop) */}
               <button
                 onClick={toggleLanguage}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all"
                 title={t('switchLanguage')}
               >
-                <div className="w-4 h-4 rounded-full bg-slate-300 flex items-center justify-center text-[8px] overflow-hidden">
+                <div className="w-4 h-4 rounded-full bg-slate-300 flex items-center justify-center text-[8px] overflow-hidden font-bold">
                   {language === 'en' ? 'EN' : 'HI'}
                 </div>
                 <span>{language === 'en' ? 'हिन्दी' : 'English'}</span>
@@ -159,7 +149,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
               {!token ? (
                 <Link
                   to="/login"
-                  className="px-6 py-2.5 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+                  className="px-6 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
                 >
                   {t('login')}
                 </Link>
@@ -189,7 +179,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
               {!isAdmin ? (
                 <button
                   onClick={() => setIsLoginOpen(true)}
-                  className="text-slate-400 hover:text-indigo-600 transition-colors p-2"
+                  className="text-slate-400 hover:text-indigo-600 transition-colors p-2 hover:bg-slate-100 rounded-lg"
                   title={t('adminAccess')}
                 >
                   <LuShieldCheck className="w-5 h-5" />
@@ -198,7 +188,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                 <div className="flex items-center gap-2">
                   <Link
                     to="/admin"
-                    className="flex items-center gap-2 bg-indigo-600 text-white px-3 py-1.5 rounded-full text-xs font-bold hover:bg-indigo-700 hover:shadow-md transition-all duration-200"
+                    className="flex items-center gap-2 bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-indigo-700 hover:shadow-md transition-all duration-200"
                   >
                     ADMIN <LuRocket className="w-3 h-3" />
                   </Link>
@@ -232,26 +222,26 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
 
         {/* Mobile Menu Overlay */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-14 left-0 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-xl py-4 px-4 flex flex-col gap-4 animate-fade-in-down z-40">
+          <div className="md:hidden absolute top-14 left-0 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-lg py-4 px-4 flex flex-col gap-4 z-40">
             {/* Mobile Navigation Links */}
 
             {/* Cart Link (Mobile) */}
             {token && (
-              <Link to="/cart" className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
-                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-indigo-600 shadow-sm">
+              <Link to="/cart" className="flex items-center gap-3 p-3 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-indigo-600">
                   <LuShoppingCart className="w-4 h-4" />
                 </div>
-                <span className="font-semibold text-slate-700">{t('myCart')}</span>
+                <span className="font-semibold text-slate-800">{t('myCart')}</span>
               </Link>
             )}
 
-            <div className="h-px bg-slate-100 my-1"></div>
+            <div className="h-px bg-slate-200 my-2"></div>
 
             {/* Customer Auth (Mobile) */}
             {!token ? (
               <Link
                 to="/login"
-                className="flex justify-center w-full px-6 py-3 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-200"
+                className="flex justify-center w-full px-6 py-3 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-all shadow-md"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {t('loginRegister')}
@@ -282,23 +272,23 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
             )}
 
             {/* Admin Auth (Mobile) */}
-            <div className="mt-2 border-t border-slate-100 pt-2">
+            <div className="mt-2 border-t border-slate-200 pt-3">
               {!isAdmin ? (
                 <button
                   onClick={() => { setIsLoginOpen(true); setIsMobileMenuOpen(false); }}
-                  className="flex items-center gap-2 w-full text-left text-slate-400 hover:text-indigo-600 p-2 rounded-lg transition-colors text-xs font-semibold uppercase tracking-wider"
+                  className="flex items-center gap-2 w-full text-left text-slate-500 hover:text-indigo-600 p-2 rounded-lg hover:bg-slate-100 transition-colors text-xs font-semibold uppercase tracking-wider"
                 >
                   <LuShieldCheck className="w-4 h-4" /> {t('adminAccess')}
                 </button>
               ) : (
-                <div className="bg-slate-50 rounded-xl p-3 flex flex-col gap-2">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{t('adminControls')}</p>
+                <div className="bg-slate-100 rounded-xl p-4 flex flex-col gap-3">
+                  <p className="text-xs font-bold text-slate-600 uppercase tracking-widest mb-1">{t('adminControls')}</p>
                   <Link
                     to="/admin"
-                    className="flex items-center gap-2 bg-white border border-indigo-100 text-indigo-700 px-4 py-2.5 rounded-lg text-sm font-bold hover:bg-indigo-50 transition-all justify-center shadow-sm"
+                    className="flex items-center gap-2 bg-white border border-slate-200 text-indigo-600 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-50 hover:border-indigo-300 transition-all justify-center"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <LuRocket className="w-4 h-4 text-indigo-500" /> {t('adminPanel')}
+                    <LuRocket className="w-4 h-4" /> {t('adminPanel')}
                   </Link>
                   <button
                     onClick={() => { handleAdminLogout(); setIsMobileMenuOpen(false); }}
@@ -352,24 +342,24 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
       </div>
 
       {/* ===== MOBILE BOTTOM NAVIGATION BAR ===== */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 shadow-lg">
         {/* Curved top edge */}
         <div className="absolute -top-3 left-0 right-0 h-4 bg-gradient-to-b from-transparent to-white" style={{ borderRadius: '50% 50% 0 0' }}></div>
-        <div className="flex items-center justify-around px-2 py-2 relative">
+        <div className="flex items-center justify-around px-2 py-3 relative">
           {/* Home */}
           <Link
             to="/"
-            className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-all duration-200 ${location.pathname === '/' ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'
+            className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all duration-200 ${location.pathname === '/' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
               }`}
           >
-            <LuHouse className={`w-5 h-5 ${location.pathname === '/' ? 'text-indigo-600' : ''}`} />
-            <span className={`text-[10px] font-bold ${location.pathname === '/' ? 'text-indigo-600' : ''}`}>{t('home')}</span>
+            <LuHouse className={`w-5 h-5`} />
+            <span className={`text-[10px] font-bold`}>{t('home')}</span>
           </Link>
 
           {/* Top Deals */}
           <Link
             to="/?sort=price-low"
-            className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-all duration-200 text-gray-400 hover:text-gray-600`}
+            className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all duration-200 text-slate-500 hover:text-slate-700 hover:bg-slate-100`}
           >
             <div className="relative">
               <LuPercent className="w-5 h-5" />
@@ -380,23 +370,23 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
           {/* Account */}
           <Link
             to={token ? '/my-orders' : '/login'}
-            className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-all duration-200 ${location.pathname === '/my-orders' || location.pathname === '/login' ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'
+            className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all duration-200 ${location.pathname === '/my-orders' || location.pathname === '/login' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
               }`}
           >
-            <LuUser className={`w-5 h-5 ${location.pathname === '/my-orders' || location.pathname === '/login' ? 'text-indigo-600' : ''}`} />
-            <span className={`text-[10px] font-bold ${location.pathname === '/my-orders' || location.pathname === '/login' ? 'text-indigo-600' : ''}`}>{t('account')}</span>
+            <LuUser className={`w-5 h-5`} />
+            <span className={`text-[10px] font-bold`}>{t('account')}</span>
           </Link>
 
           {/* Cart */}
           <Link
             to={token ? '/cart' : '/login'}
-            className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-all duration-200 ${location.pathname === '/cart' ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'
+            className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all duration-200 ${location.pathname === '/cart' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
               }`}
           >
             <div className="relative">
-              <LuShoppingCart className={`w-5 h-5 ${location.pathname === '/cart' ? 'text-indigo-600' : ''}`} />
+              <LuShoppingCart className={`w-5 h-5`} />
             </div>
-            <span className={`text-[10px] font-bold ${location.pathname === '/cart' ? 'text-indigo-600' : ''}`}>{t('cart')}</span>
+            <span className={`text-[10px] font-bold`}>{t('cart')}</span>
           </Link>
         </div>
       </div>

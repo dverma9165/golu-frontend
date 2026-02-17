@@ -68,10 +68,12 @@ const CartPage = ({ token }) => {
 
     if (!token) return (
         <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-8">
-            <FaShoppingCart className="w-16 h-16 text-slate-300 mb-6" />
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">{t('pleaseLogin')}</h2>
-            <p className="text-slate-500 mb-8 max-w-md">{t('signInToViewCart')}</p>
-            <Link to="/login" className="bg-slate-900 text-white px-8 py-3 rounded-full font-bold hover:bg-slate-800 transition-transform hover:-translate-y-1 shadow-lg">
+            <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+                <FaShoppingCart className="w-10 h-10 text-slate-300" />
+            </div>
+            <h2 className="text-3xl font-bold text-slate-900 mb-3">{t('pleaseLogin')}</h2>
+            <p className="text-slate-500 mb-8 max-w-md text-base">{t('signInToViewCart')}</p>
+            <Link to="/login" className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-700 hover:shadow-lg transition-all hover:-translate-y-1">
                 {t('logInNow')}
             </Link>
         </div>
@@ -88,24 +90,24 @@ const CartPage = ({ token }) => {
 
             {/* --- PAGINATED CART SECTION --- */}
             <div className="mb-16">
-                <div className="flex items-center gap-4 mb-8">
-                    <div className="bg-indigo-100 p-3 rounded-xl">
+                <div className="flex items-center gap-4 mb-10">
+                    <div className="bg-indigo-100 p-3.5 rounded-xl">
                         <FaShoppingCart className="w-6 h-6 text-indigo-600" />
                     </div>
-                    <h1 className="text-3xl font-bold text-slate-900 font-display">{t('yourCart')}</h1>
-                    <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-sm font-medium">
+                    <h1 className="text-4xl font-bold text-slate-900">{t('yourCart')}</h1>
+                    <span className="bg-slate-100 text-slate-700 px-4 py-1.5 rounded-full text-sm font-semibold">
                         {totalItems} {totalItems === 1 ? t('item') : t('items')}
                     </span>
                 </div>
 
                 {cart.length === 0 ? (
-                    <div className="glass rounded-3xl p-16 text-center border-dashed border-2 border-slate-200">
-                        <div className="bg-slate-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <div className="bg-white rounded-2xl p-16 text-center border-2 border-dashed border-slate-200 smooth-transition">
+                        <div className="bg-slate-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
                             <FaShoppingCart className="w-10 h-10 text-slate-300" />
                         </div>
-                        <h2 className="text-xl font-bold text-slate-800 mb-3">{t('cartEmpty')}</h2>
-                        <p className="text-slate-500 mb-8">{t('cartEmptyText')}</p>
-                        <Link to="/" className="inline-flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-full font-bold hover:bg-indigo-700 transition-all hover:shadow-lg hover:-translate-y-1">
+                        <h2 className="text-2xl font-bold text-slate-900 mb-3">{t('cartEmpty')}</h2>
+                        <p className="text-slate-500 mb-8 text-base">{t('cartEmptyText')}</p>
+                        <Link to="/" className="inline-flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-700 hover:shadow-lg transition-all hover:-translate-y-1">
                             {t('startShopping')} <FaArrowRight className="w-4 h-4" />
                         </Link>
                     </div>
@@ -114,7 +116,7 @@ const CartPage = ({ token }) => {
                         {/* Cart Items List */}
                         <div className="lg:w-2/3 space-y-4">
                             {cart.map((item, idx) => (
-                                <div key={idx} className="glass rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-6 hover:shadow-lg transition-shadow duration-300 group">
+                                <div key={idx} className="bg-white rounded-xl p-5 sm:p-6 flex flex-col sm:flex-row items-center gap-6 border border-slate-200 hover:shadow-lg hover:border-slate-300 transition-all duration-300 group smooth-transition">
                                     {/* Product Image */}
                                     <div className="w-full sm:w-24 h-24 bg-slate-100 rounded-xl overflow-hidden shrink-0 relative">
                                         {item.product?.thumbnail?.googleDriveId ? (
@@ -186,19 +188,19 @@ const CartPage = ({ token }) => {
 
                         {/* Order Summary */}
                         <div className="lg:w-1/3">
-                            <div className="glass rounded-3xl p-6 sticky top-28">
-                                <h2 className="text-xl font-bold text-slate-900 mb-6 font-display">{t('orderSummary')}</h2>
+                            <div className="bg-white rounded-2xl p-7 sticky top-28 border border-slate-200 shadow-lg smooth-transition">
+                                <h2 className="text-2xl font-bold text-slate-900 mb-7">{t('orderSummary')}</h2>
 
-                                <div className="space-y-4 mb-6">
+                                <div className="space-y-4 mb-7">
                                     <div className="flex justify-between text-slate-600">
-                                        <span>{t('subtotal')}</span>
-                                        <span>₹{calculateTotal()}</span>
+                                        <span className="font-medium">{t('subtotal')}</span>
+                                        <span className="font-medium">₹{calculateTotal()}</span>
                                     </div>
                                     <div className="flex justify-between text-slate-600">
-                                        <span>{t('taxesIncluded')}</span>
-                                        <span>₹0</span>
+                                        <span className="font-medium">{t('taxesIncluded')}</span>
+                                        <span className="font-medium">₹0</span>
                                     </div>
-                                    <div className="h-px bg-slate-200 my-2"></div>
+                                    <div className="h-px bg-slate-200"></div>
                                     <div className="flex justify-between text-slate-900 font-bold text-lg">
                                         <span>{t('total')}</span>
                                         <span>₹{calculateTotal()}</span>
@@ -207,13 +209,13 @@ const CartPage = ({ token }) => {
 
                                 <button
                                     onClick={() => setIsCheckoutOpen(true)}
-                                    className="w-full bg-slate-900 text-white rounded-xl py-4 font-bold text-lg hover:bg-slate-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 mb-4"
+                                    className="w-full bg-indigo-600 text-white rounded-lg py-4 font-bold text-base hover:bg-indigo-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 mb-4 smooth-transition"
                                 >
                                     {t('proceedCheckout')}
                                 </button>
 
-                                <div className="flex items-center justify-center gap-2 text-xs text-slate-400">
-                                    <FaShieldAlt className="text-green-500" />
+                                <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
+                                    <FaShieldAlt className="text-emerald-500" />
                                     <span>{t('secureCheckout')}</span>
                                 </div>
                             </div>

@@ -3,12 +3,24 @@
 
 @import "tailwindcss";
 
+/* ─── DESIGN TOKENS ─── */
+@theme inline {
+  --color-primary: #4f46e5; /* Indigo */
+  --color-primary-dark: #1f2937; /* Charcoal */
+  --color-background: #fafbfc; /* Light neutral */
+  --color-surface: #ffffff; /* White surface */
+  --color-text-primary: #0f172a; /* Dark slate */
+  --color-text-secondary: #64748b; /* Medium slate */
+  --color-border: #e2e8f0; /* Subtle gray */
+  --color-accent: #6366f1; /* Accent indigo */
+  --color-success: #10b981; /* Green */
+  --color-error: #ef4444; /* Red */
+}
+
 body {
-  background-color: #f8fafc;
-  /* Slate-50/100ish */
+  background-color: var(--color-background);
   font-family: 'Plus Jakarta Sans', sans-serif;
-  color: #0f172a;
-  /* Slate-900 */
+  color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -20,6 +32,8 @@ h4,
 h5,
 h6 {
   font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 /* Custom Scrollbar */
@@ -52,10 +66,10 @@ h6 {
 
 /* Glassmorphism Utilities */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Animation Utilities */
@@ -64,8 +78,21 @@ h6 {
 }
 
 .hover-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12);
+}
+
+.hover-scale {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.15);
+}
+
+.smooth-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* --- God Level Animations --- */

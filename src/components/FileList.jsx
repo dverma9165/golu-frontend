@@ -86,37 +86,37 @@ const ProductCard = ({ file }) => {
   return (
     <Link
       to={`/product/${file._id}`}
-      className="group bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-lg hover:border-gray-200 transition-all duration-200 "
+      className="group bg-white rounded-xl overflow-hidden border border-slate-200 hover:shadow-xl hover:border-slate-300 transition-all duration-300 hover:-translate-y-1 smooth-transition"
       style={{ textDecoration: 'none' }}
     >
       {/* Thumbnail */}
-      <div className="relative bg-gray-50 overflow-hidden" style={{ paddingTop: '100%' }}>
+      <div className="relative bg-gradient-to-br from-slate-100 to-slate-50 overflow-hidden" style={{ paddingTop: '100%' }}>
         {thumb ? (
           <img
             src={thumb}
             alt={file.title}
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             loading="lazy"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-            <LuFileImage className="text-gray-300 text-4xl" />
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-50">
+            <LuFileImage className="text-slate-300 text-4xl" />
           </div>
         )}
         {/* Discount badge */}
         {disc && (
-          <span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
+          <span className="absolute top-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
             {disc}% {t('off')}
           </span>
         )}
-        {/* File type badge - Sticker Style */}
+        {/* File type badge - Modern Style */}
         {file.fileType && (
-          <div className="absolute bottom-2 right-2 bg-white border border-gray-200 shadow-sm rounded-md px-1.5 py-0.5 flex flex-col items-center justify-center transform hover:scale-105 transition-transform">
-            <span className="text-[10px] font-black text-red-600 uppercase leading-none tracking-tighter">
+          <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm border border-slate-100 shadow-md rounded-lg px-2 py-1 flex flex-col items-center justify-center transform group-hover:scale-105 transition-transform">
+            <span className="text-[9px] font-bold text-indigo-600 uppercase leading-none tracking-tight">
               {file.fileType}
             </span>
             {file.version && (
-              <span className="text-[8px] font-bold text-blue-600 uppercase leading-none tracking-tighter mt-0.5">
+              <span className="text-[8px] font-semibold text-slate-500 uppercase leading-none tracking-tight mt-0.5">
                 {file.version}
               </span>
             )}
@@ -125,10 +125,10 @@ const ProductCard = ({ file }) => {
       </div>
 
       {/* Info */}
-      <div className="p-2.5">
-        <p className="text-xs text-indigo-500 font-medium truncate">{categoryLabel}</p>
+      <div className="p-3">
+        <p className="text-xs text-indigo-600 font-semibold uppercase tracking-wider truncate">{categoryLabel}</p>
         <p
-          className="text-[15px] font-bold text-gray-800 leading-tight mt-1 line-clamp-2 min-h-[2.5em]"
+          className="text-sm font-bold text-slate-900 leading-snug mt-1.5 line-clamp-2 min-h-[2.5em]"
           style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
           title={file.title}
         >
@@ -137,24 +137,24 @@ const ProductCard = ({ file }) => {
 
         {/* Rating */}
         {(file.rating || 0) > 0 && (
-          <div className="flex items-center gap-1 mt-1.5">
-            <span className="flex items-center gap-0.5 bg-green-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+          <div className="flex items-center gap-1.5 mt-2">
+            <span className="flex items-center gap-0.5 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
               <LuStar className="text-[9px] fill-current" /> {file.rating?.toFixed(1)}
             </span>
-            <span className="text-gray-400 text-[10px]">({file.numReviews})</span>
+            <span className="text-slate-400 text-[10px]">({file.numReviews})</span>
           </div>
         )}
 
         {/* Price */}
-        <div className="mt-2 flex items-baseline gap-2">
-          <span className="text-lg font-bold text-gray-900">
+        <div className="mt-3 flex items-baseline gap-2">
+          <span className="text-lg font-bold text-slate-900">
             {displayPrice === 0 ? t('free') : `₹${displayPrice}`}
           </span>
           {disc && (
-            <span className="text-xs text-gray-400 line-through">₹{file.price}</span>
+            <span className="text-xs text-slate-400 line-through">₹{file.price}</span>
           )}
           {savedAmount > 0 && (
-            <span className="text-xs font-bold text-green-700 bg-green-100 px-2 py-1 rounded ml-auto">
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full ml-auto">
               {t('save')} ₹{savedAmount}
             </span>
           )}
@@ -183,29 +183,29 @@ const FilterSheet = ({
 
   return (
     <>
-      {visible && <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm" onClick={onClose} />}
+      {visible && <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-md" onClick={onClose} />}
       <div
-        className="fixed bottom-0 left-0 right-0 z-[60] bg-white rounded-t-2xl transition-transform duration-300 overflow-y-auto"
-        style={{ maxHeight: '80vh', transform: visible ? 'translateY(0)' : 'translateY(100%)' }}
+        className="fixed bottom-0 left-0 right-0 z-[60] bg-white rounded-t-3xl transition-transform duration-300 overflow-y-auto"
+        style={{ maxHeight: '85vh', transform: visible ? 'translateY(0)' : 'translateY(100%)' }}
       >
-        <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 bg-gray-300 rounded-full" />
+        <div className="flex justify-center pt-4 pb-2">
+          <div className="w-12 h-1.5 bg-slate-300 rounded-full" />
         </div>
-        <div className="flex items-center justify-between px-4 pb-3 border-b border-gray-100">
-          <h2 className="text-base font-bold text-gray-800">{t('filters')} & {t('sortBy')}</h2>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100">
-            <LuX className="text-gray-500 w-5 h-5" />
+        <div className="flex items-center justify-between px-5 pb-4 border-b border-slate-200">
+          <h2 className="text-lg font-bold text-slate-900">{t('filters')} & {t('sortBy')}</h2>
+          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-slate-100">
+            <LuX className="text-slate-500 w-5 h-5" />
           </button>
         </div>
 
-        <div className="px-4 py-4 space-y-5">
+        <div className="px-5 py-5 space-y-6">
           {/* Sort */}
           <div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">{t('sortBy')}</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">{t('sortBy')}</p>
             <div className="flex flex-wrap gap-2">
               {sortOptions.map(opt => (
                 <button key={opt.value} onClick={() => setSortBy(opt.value)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${sortBy === opt.value ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+                  className={`px-4 py-2 rounded-full text-xs font-semibold border transition-all ${sortBy === opt.value ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                     }`}>
                   {opt.label}
                 </button>
@@ -215,11 +215,11 @@ const FilterSheet = ({
 
           {/* Category */}
           <div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">{t('category')}</p>
-            <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">{t('category')}</p>
+            <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
               {categories.map(cat => (
                 <button key={cat} onClick={() => setCategory(cat)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${category === cat ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+                  className={`px-4 py-2 rounded-full text-xs font-semibold border transition-all ${category === cat ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                     }`}>
                   {t(CATEGORY_KEYS[cat] || cat)}
                 </button>
@@ -229,35 +229,35 @@ const FilterSheet = ({
 
           {/* Price */}
           <div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">{t('priceRange')}</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">{t('priceRange')}</p>
             <div className="flex flex-wrap gap-2">
               {priceRanges.map(r => (
                 <button key={r.value} onClick={() => setPriceRange(r.value)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${priceRange === r.value ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+                  className={`px-4 py-2 rounded-full text-xs font-semibold border transition-all ${priceRange === r.value ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                     }`}>
                   {r.label}
                 </button>
               ))}
             </div>
             {priceRange === 'Custom' && (
-              <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center gap-2 mt-3">
                 <input type="number" placeholder="Min ₹" value={customMin} onChange={e => setCustomMin(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
-                <span className="text-gray-400">–</span>
+                  className="flex-1 px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none hover:border-slate-300" />
+                <span className="text-slate-400">–</span>
                 <input type="number" placeholder="Max ₹" value={customMax} onChange={e => setCustomMax(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                  className="flex-1 px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none hover:border-slate-300" />
               </div>
             )}
           </div>
 
           {/* File Type */}
           <div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">{t('fileType')}</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">{t('fileType')}</p>
             <div className="flex flex-wrap gap-2">
               {fileTypes.map(ft => (
                 <button key={ft}
                   onClick={() => setFileType(prev => prev.includes(ft) ? prev.filter(x => x !== ft) : [...prev, ft])}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${fileType.includes(ft) ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+                  className={`px-4 py-2 rounded-full text-xs font-semibold border transition-all ${fileType.includes(ft) ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                     }`}>
                   {ft}
                 </button>
@@ -267,11 +267,11 @@ const FilterSheet = ({
 
           {/* Fonts */}
           <div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">{t('fontsIncluded')}</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">{t('fontsIncluded')}</p>
             <div className="flex gap-2">
               {['All', 'Yes', 'No'].map(f => (
                 <button key={f} onClick={() => setFontsIncluded(f)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-semibold border transition-all ${fontsIncluded === f ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+                  className={`px-4 py-2 rounded-full text-xs font-semibold border transition-all ${fontsIncluded === f ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                     }`}>
                   {f === 'All' ? t('all') : f === 'Yes' ? t('withFontsLabel') : t('noFontsLabel')}
                 </button>
@@ -280,13 +280,13 @@ const FilterSheet = ({
           </div>
         </div>
 
-        <div className="px-4 py-3 flex gap-3 border-t border-gray-100">
+        <div className="px-5 py-4 flex gap-3 border-t border-slate-200">
           <button onClick={onClear}
-            className="flex-1 py-2.5 rounded-xl text-sm font-bold border-2 border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+            className="flex-1 py-3 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors">
             {t('clearAll')}
           </button>
           <button onClick={onClose}
-            className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+            className="flex-1 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg transition-all">
             {t('applyFilters')}
           </button>
         </div>
@@ -308,30 +308,30 @@ const FeedCard = ({ file }) => {
   return (
     <Link
       to={`/product/${file._id}`}
-      className="flex-none w-40 sm:w-44 bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-lg hover:border-gray-200 transition-all duration-200 group flex flex-col h-full"
+      className="flex-none w-40 sm:w-44 bg-white rounded-xl overflow-hidden border border-slate-200 hover:shadow-xl hover:border-slate-300 transition-all duration-300 hover:-translate-y-1 group flex flex-col h-full smooth-transition"
       style={{ textDecoration: 'none' }}
     >
-      <div className="relative bg-gray-50 overflow-hidden" style={{ paddingTop: '100%' }}>
+      <div className="relative bg-gradient-to-br from-slate-100 to-slate-50 overflow-hidden" style={{ paddingTop: '100%' }}>
         {thumb ? (
           <img src={thumb} alt={file.title}
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-            <LuFileImage className="text-gray-300 text-3xl" />
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-50">
+            <LuFileImage className="text-slate-300 text-3xl" />
           </div>
         )}
         {disc && (
-          <span className="absolute top-1.5 left-1.5 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">
+          <span className="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">
             {disc}% OFF
           </span>
         )}
         {file.fileType && (
-          <div className="absolute bottom-1.5 right-1.5 bg-white border border-gray-200 shadow-sm rounded-md px-1 py-0.5 flex flex-col items-center justify-center">
-            <span className="text-[9px] font-black text-red-600 uppercase leading-none tracking-tighter">
+          <div className="absolute bottom-2 right-2 bg-white/95 backdrop-blur-sm border border-slate-100 shadow-md rounded-lg px-1.5 py-0.5 flex flex-col items-center justify-center">
+            <span className="text-[8px] font-bold text-indigo-600 uppercase leading-none tracking-tight">
               {file.fileType}
             </span>
             {file.version && (
-              <span className="text-[7px] font-bold text-blue-600 uppercase leading-none tracking-tighter mt-0.5">
+              <span className="text-[7px] font-semibold text-slate-500 uppercase leading-none tracking-tight mt-0.5">
                 {file.version}
               </span>
             )}
@@ -339,12 +339,12 @@ const FeedCard = ({ file }) => {
         )}
       </div>
       <div className="p-2.5 flex flex-col flex-1">
-        <p className="text-[13px] font-bold text-gray-800 leading-tight line-clamp-2 h-9" title={file.title}>{file.title || t('untitled')}</p>
-        <div className="mt-1.5 flex items-baseline gap-1.5">
-          <span className="text-base font-bold text-gray-900">{displayPrice === 0 ? t('free') : `₹${displayPrice}`}</span>
-          {disc && <span className="text-xs text-gray-400 line-through">₹{file.price}</span>}
+        <p className="text-sm font-bold text-slate-900 leading-snug line-clamp-2 h-9" title={file.title}>{file.title || t('untitled')}</p>
+        <div className="mt-2 flex items-baseline gap-1.5">
+          <span className="text-base font-bold text-slate-900">{displayPrice === 0 ? t('free') : `₹${displayPrice}`}</span>
+          {disc && <span className="text-xs text-slate-400 line-through">₹{file.price}</span>}
           {savedAmount > 0 && (
-            <span className="text-[10px] font-bold text-green-700 ml-auto">
+            <span className="text-[10px] font-bold text-emerald-700 ml-auto">
               {t('save')} ₹{savedAmount}
             </span>
           )}
@@ -362,35 +362,32 @@ const FeedRow = ({ title, subtitle, icon: Icon, bgGradient, textColor, items, on
   if (!rowLoading && (!items || items.length === 0)) return null;
 
   return (
-    <div className={`mb-2 pb-1 ${bgGradient || 'bg-white'} rounded-xl mx-2 sm:mx-0 overflow-hidden shadow-sm border border-gray-100/50`}>
+    <div className={`mb-6 pb-0 ${bgGradient || 'bg-white'} rounded-2xl mx-2 sm:mx-0 overflow-hidden shadow-md border border-slate-200 smooth-transition`}>
       {/* Section Header */}
-      <div className="px-3 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          {Icon && <Icon className={`w-5 h-5 ${textColor || 'text-gray-700'}`} />}
+      <div className="px-4 py-3.5 flex items-center justify-between border-b border-slate-100">
+        <div className="flex items-center gap-3">
+          {Icon && <Icon className={`w-6 h-6 ${textColor || 'text-slate-700'}`} />}
           <div>
-            <h3 className={`text-base font-bold tracking-tight ${textColor || 'text-gray-900'}`}>{title}</h3>
-            {subtitle && <p className={`text-[11px] ${textColor ? textColor + '/80' : 'text-gray-500'}`}>{subtitle}</p>}
+            <h3 className={`text-lg font-bold tracking-tight ${textColor || 'text-slate-900'}`}>{title}</h3>
+            {subtitle && <p className={`text-xs ${textColor ? textColor + '/70' : 'text-slate-500'}`}>{subtitle}</p>}
           </div>
         </div>
         {onSeeAll && (
           <button onClick={onSeeAll}
-            className={`text-xs font-bold ${textColor || 'text-indigo-600'} hover:opacity-80 whitespace-nowrap px-3 py-1 rounded-full bg-white/50 backdrop-blur-sm transition-all shadow-sm`}>
+            className={`text-xs font-bold ${textColor || 'text-indigo-600'} hover:opacity-70 whitespace-nowrap px-4 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 transition-all`}>
             {t('seeAll')} →
           </button>
         )}
       </div>
       {/* Scrollable Row */}
-      <div ref={scrollRef} className="flex overflow-x-auto scrollbar-hide gap-3 pb-2 bg-transparent snap-x items-stretch px-0">
+      <div ref={scrollRef} className="flex overflow-x-auto scrollbar-hide gap-3 px-4 py-3 bg-transparent snap-x items-stretch">
         <div className="w-0 shrink-0" />
         {rowLoading ? (
           Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="flex-none w-44 sm:w-48 rounded-xl bg-white/60 animate-pulse snap-start" style={{ height: 220 }} />
+            <div key={i} className="flex-none w-44 sm:w-48 rounded-xl bg-slate-200 animate-pulse snap-start" style={{ height: 220 }} />
           ))
         ) : (
           items.map((file, index) => (
-            /* Add left margin to first item if needed, but px-3 on container should suffice. 
-               However, to be robust against flex padding issues, we can use ps-1 or similar if implied? 
-               No, px-3 should work. */
             <div key={file._id} className="snap-start flex"><FeedCard file={file} /></div>
           ))
         )}

@@ -129,13 +129,13 @@ const ProductPage = ({ token }) => {
     if (!product) return null;
 
     return (
-        <div className="bg-gray-50 min-h-screen py-1 px-4 sm:px-6 lg:px-8">
+        <div className="bg-slate-50 min-h-screen py-6 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
 
-                <div className="bg-white rounded-3xl shadow-2xl overflow-hidden md:flex md:min-h-[600px] border border-slate-100">
+                <div className="bg-white rounded-2xl shadow-lg overflow-hidden md:flex md:min-h-[600px] border border-slate-200 smooth-transition">
                     {/* Left: Image Section */}
-                    <div className="md:w-1/2 bg-slate-100 relative group overflow-hidden flex items-center justify-center p-8">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-white via-slate-100 to-slate-200 opacity-70"></div>
+                    <div className="md:w-1/2 bg-gradient-to-br from-slate-100 to-slate-50 relative group overflow-hidden flex items-center justify-center p-8">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-white via-slate-50 to-slate-100 opacity-60"></div>
 
                         {/* Decorative Circle */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl pointer-events-none"></div>
