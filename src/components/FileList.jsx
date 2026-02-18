@@ -873,6 +873,9 @@ const FileList = () => {
         </div>
 
         <div className="max-w-5xl mx-auto relative z-10 text-center">
+          <p className="text-white text-[10px] sm:text-[14px] tracking-[0.2em] mb-4 px-2">
+            Contact No : 9977882148
+          </p>
           <p className="text-[#ed3237] font-black text-[10px] sm:text-[14px] tracking-[0.2em] uppercase mb-4 animate-fade-in px-2">
             हर सामान मिलेगा एक ही छत के नीचे...
           </p>

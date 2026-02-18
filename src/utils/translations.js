@@ -132,7 +132,7 @@ export const translations = {
         viewCart: "View Cart",
         loginRegister: "Login / Register",
         myDownloadsOrders: "My Downloads & Orders",
-        myAccount: "My Account",
+        myAccount: "My Orders",
         myCart: "My Cart",
         adminLogout: "Admin Logout",
         allDesigns: "All Designs",

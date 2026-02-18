@@ -167,32 +167,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                 </button>
               )}
 
-              {/* Admin Auth */}
-              {!isAdmin ? (
-                <button
-                  onClick={() => setIsLoginOpen(true)}
-                  className="text-slate-500 hover:text-indigo-400 transition-colors p-2"
-                  title={t('adminAccess')}
-                >
-                  <LuShieldCheck className="w-4 h-4" />
-                </button>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Link
-                    to="/admin"
-                    className="flex items-center gap-2 bg-indigo-600 text-white px-3 py-1.5 rounded-full text-xs font-bold hover:bg-indigo-700 hover:shadow-md transition-all duration-200 shadow-indigo-500/20"
-                  >
-                    ADMIN <LuRocket className="w-3 h-3" />
-                  </Link>
-                  <button
-                    onClick={handleAdminLogout}
-                    className="text-slate-400 hover:text-red-500 transition-colors p-2"
-                    title={t('adminLogout')}
-                  >
-                    <LuLogOut className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
+
             </div>
 
             {/* Mobile Menu Button */}
@@ -257,7 +232,7 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
 
       {/* Footer */}
       <div className="hidden md:block">
-        <Footer />
+        <Footer isAdmin={isAdmin} onOpenLogin={() => setIsLoginOpen(true)} onLogout={handleAdminLogout} />
       </div>
       {/* Mobile Footer Area */}
       <div className="md:hidden pb-24 px-4">

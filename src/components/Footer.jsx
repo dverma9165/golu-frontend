@@ -2,7 +2,7 @@ import React from 'react';
 import { FaHeart, FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaYoutube } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
-const Footer = () => {
+const Footer = ({ isAdmin, onOpenLogin, onLogout }) => {
     return (
         <footer className="relative bg-[#0A192F] text-slate-300 pt-20 pb-10 mt-auto overflow-hidden border-t border-white/5">
             {/* Subtle Abstract Background */}
@@ -59,6 +59,26 @@ const Footer = () => {
                             <li><Link to="/about" className="hover:text-[#ed3237] transition-colors flex items-center gap-2 group"><span className="w-1.5 h-1.5 bg-[#ed3237] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span> About Us</Link></li>
                             <li><Link to="/contact" className="hover:text-[#ed3237] transition-colors flex items-center gap-2 group"><span className="w-1.5 h-1.5 bg-[#ed3237] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span> Contact Us</Link></li>
                             <li><Link to="/terms" className="hover:text-[#ed3237] transition-colors flex items-center gap-2 group"><span className="w-1.5 h-1.5 bg-[#ed3237] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span> Terms & Conditions</Link></li>
+                            {!isAdmin ? (
+                                <li>
+                                    <button onClick={onOpenLogin} className="hover:text-[#ed3237] transition-colors flex items-center gap-2 group text-left w-full">
+                                        <span className="w-1.5 h-1.5 bg-[#ed3237] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span> Admin Login
+                                    </button>
+                                </li>
+                            ) : (
+                                <>
+                                    <li>
+                                        <Link to="/admin" className="hover:text-[#ed3237] transition-colors flex items-center gap-2 group">
+                                            <span className="w-1.5 h-1.5 bg-[#ed3237] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span> Admin Dashboard
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <button onClick={onLogout} className="hover:text-[#ed3237] transition-colors flex items-center gap-2 group text-left w-full">
+                                            <span className="w-1.5 h-1.5 bg-[#ed3237] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span> Admin Logout
+                                        </button>
+                                    </li>
+                                </>
+                            )}
                         </ul>
                     </div>
 
