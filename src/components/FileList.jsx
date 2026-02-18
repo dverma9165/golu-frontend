@@ -106,7 +106,7 @@ const ProductCard = ({ file }) => {
         {/* Discount badge */}
         {disc && (
           <span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
-            {disc}% {t('off')}
+            {disc} {t('off')}
           </span>
         )}
         {/* File type badge - Sticker Style */}
@@ -478,7 +478,6 @@ const HomeFeed = ({ onFilterChange }) => {
   const [sectionData, setSectionData] = useState({});
   const [feedLoading, setFeedLoading] = useState(true);
   const { t } = useLanguage();
-  const feedSections = React.useMemo(() => getFeedSections(t), [t]);
 
   useEffect(() => {
     setFeedLoading(true);
@@ -490,23 +489,191 @@ const HomeFeed = ({ onFilterChange }) => {
       .finally(() => setFeedLoading(false));
   }, []);
 
+  // Aggregate all unique files from all sections.
+  const allFeedFiles = React.useMemo(() => {
+    const allFiles = [];
+    const seenIds = new Set();
+    Object.values(sectionData).forEach(items => {
+      if (Array.isArray(items)) {
+        items.forEach(file => {
+          if (!seenIds.has(file._id)) {
+            seenIds.add(file._id);
+            allFiles.push(file);
+          }
+        });
+      }
+    });
+    return allFiles;
+  }, [sectionData]);
+
+  if (feedLoading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="aspect-square bg-white/60 animate-pulse rounded-xl" />
+        ))}
+      </div>
+    );
+  }
+
+  if (allFeedFiles.length === 0) return null;
+
   return (
-    <div className="pb-0 w-full">
-      {/* Render sections — only show those with products */}
-      {feedSections.map(section => (
-        <FeedRow
-          key={section.id}
-          title={section.title}
-          subtitle={section.subtitle}
-          icon={section.icon}
-          bgGradient={section.bgGradient}
-          textColor={section.textColor}
-          items={sectionData[section.id] || []}
-          loading={feedLoading}
-          onSeeAll={() => onFilterChange(section.filterKey, section.filterValue)}
-        />
-      ))}
+    <div className="w-full px-3 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {allFeedFiles.map(file => (
+          <HoverRevealCard key={file._id} file={file} t={t} />
+        ))}
+      </div>
     </div>
+  );
+};
+
+/* ─── HOVER REVEAL CARD ─── */
+const HoverRevealCard = ({ file, t }) => {
+  const thumb = file.thumbnail?.googleDriveId
+    ? `${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${file.thumbnail.googleDriveId}`
+    : null;
+  const displayPrice = file.salePrice ?? file.price ?? 0;
+  const disc = discount(file.price, file.salePrice);
+  const categoryLabel = t(CATEGORY_KEYS[file.category] || file.category) || file.category;
+
+  // Generate a consistent random pastel background color based on file ID
+  const bgColor = React.useMemo(() => {
+    const colors = [
+      'bg-red-50', 'bg-orange-50', 'bg-amber-50', 'bg-yellow-50',
+      'bg-lime-50', 'bg-green-50', 'bg-emerald-50', 'bg-teal-50',
+      'bg-cyan-50', 'bg-sky-50', 'bg-blue-50', 'bg-indigo-50',
+      'bg-violet-50', 'bg-purple-50', 'bg-fuchsia-50', 'bg-pink-50', 'bg-rose-50'
+    ];
+    let hash = 0;
+    const str = file._id || '';
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % colors.length;
+    return colors[index];
+  }, [file._id]);
+
+  return (
+    <Link
+      to={`/product/${file._id}`}
+      style={{ textDecoration: 'none' }}
+      className={`relative block aspect-square rounded-2xl overflow-hidden group shadow-md hover:shadow-xl transition-all duration-300 ${bgColor}`}
+    >
+      {/* Premium Indian Traditional Frame Overlay */}
+      <div className="absolute inset-0 z-10 pointer-events-none border-[6px] border-[#ed3237]/5 group-hover:border-[#ed3237]/10 transition-colors duration-500">
+        {/* Ornate Corner Motifs */}
+        <div className="absolute top-1 left-1 w-10 h-10 text-[#ed3237] opacity-40 group-hover:opacity-90 transition-all duration-500 group-hover:scale-110">
+          <svg viewBox="0 0 100 100" className="w-full h-full fill-current">
+            <path d="M0 0 L40 0 C25 0 0 25 0 40 Z M15 15 C20 30 30 20 15 15 M5 25 Q 15 25 15 5 Q 5 5 5 25" />
+            <circle cx="8" cy="8" r="4" />
+          </svg>
+        </div>
+        <div className="absolute top-1 right-1 w-10 h-10 text-[#ed3237] opacity-40 group-hover:opacity-90 transition-all duration-500 group-hover:scale-110 rotate-90">
+          <svg viewBox="0 0 100 100" className="w-full h-full fill-current">
+            <path d="M0 0 L40 0 C25 0 0 25 0 40 Z M15 15 C20 30 30 20 15 15 M5 25 Q 15 25 15 5 Q 5 5 5 25" />
+            <circle cx="8" cy="8" r="4" />
+          </svg>
+        </div>
+        <div className="absolute bottom-1 left-1 w-10 h-10 text-[#ed3237] opacity-40 group-hover:opacity-90 transition-all duration-500 group-hover:scale-110 -rotate-90">
+          <svg viewBox="0 0 100 100" className="w-full h-full fill-current">
+            <path d="M0 0 L40 0 C25 0 0 25 0 40 Z M15 15 C20 30 30 20 15 15 M5 25 Q 15 25 15 5 Q 5 5 5 25" />
+            <circle cx="8" cy="8" r="4" />
+          </svg>
+        </div>
+        <div className="absolute bottom-1 right-1 w-10 h-10 text-[#ed3237] opacity-40 group-hover:opacity-90 transition-all duration-500 group-hover:scale-110 rotate-180">
+          <svg viewBox="0 0 100 100" className="w-full h-full fill-current">
+            <path d="M0 0 L40 0 C25 0 0 25 0 40 Z M15 15 C20 30 30 20 15 15 M5 25 Q 15 25 15 5 Q 5 5 5 25" />
+            <circle cx="8" cy="8" r="4" />
+          </svg>
+        </div>
+
+        {/* Inner Dotted Decorative Row */}
+        <div className="absolute inset-2 border border-dashed border-[#ed3237]/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+
+        {/* Subtle Decorative Pattern Border */}
+        <div className="absolute inset-0 border-[1px] border-[#ed3237]/10 group-hover:border-[#ed3237]/30 transition-colors duration-500 rounded-2xl"></div>
+      </div>
+      {/* Image (Visible Always) */}
+      <div className="w-full h-full p-4 flex items-center justify-center">
+        {thumb ? (
+          <img
+            src={thumb}
+            alt={file.title}
+            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 mix-blend-multiply"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-300">
+            <LuFileImage className="text-5xl" />
+          </div>
+        )}
+      </div>
+
+      {/* Mobile-only info bar (since hover doesn't exist on mobile) */}
+      <div className="md:hidden absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm p-3 border-t border-gray-100 flex flex-col items-center">
+        <h4 className="text-[10px] font-bold text-slate-800 line-clamp-1 w-full text-center mb-0.5">{file.title || t('untitled')}</h4>
+        <div className="flex items-center gap-1.5">
+          <span className="text-[11px] font-black text-[#ed3237]">{displayPrice === 0 ? t('free') : `₹${displayPrice}`}</span>
+          {disc && <span className="text-[9px] text-slate-400 line-through">₹{file.price}</span>}
+        </div>
+      </div>
+
+      {/* Hover Overlay with Details (Desktop Only) */}
+      <div className="hidden md:flex absolute inset-0 bg-white/95 opacity-0 group-hover:opacity-100 transition-all duration-300 flex-col justify-center items-center text-center p-6 backdrop-blur-sm border-2 border-transparent group-hover:border-indigo-500/10 font-display">
+        <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 w-full flex flex-col items-center">
+          <p className="text-[10px] font-bold tracking-[0.2em] text-indigo-600 uppercase mb-2">
+            {categoryLabel}
+          </p>
+
+          <h3 className="text-slate-900 font-extrabold text-lg leading-tight mb-3 line-clamp-2 px-2">
+            {file.title || t('untitled')}
+          </h3>
+
+          {/* Rating */}
+          {(file.rating || 0) > 0 && (
+            <div className="flex items-center justify-center gap-1.5 mb-4">
+              <div className="flex text-amber-400 gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <LuStar key={i} className={`w-3.5 h-3.5 ${i < Math.round(file.rating) ? 'fill-current' : 'text-slate-200'}`} />
+                ))}
+              </div>
+              <span className="text-slate-400 text-[10px] font-bold">({file.numReviews})</span>
+            </div>
+          )}
+
+          {/* Pricing Section */}
+          <div className="flex flex-col items-center gap-1 mb-6">
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-black text-slate-900">
+                {displayPrice === 0 ? t('free') : `₹${displayPrice}`}
+              </span>
+              {disc && (
+                <span className="text-sm text-slate-400 line-through decoration-red-400/50">₹{file.price}</span>
+              )}
+            </div>
+            {disc && (
+              <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                {t('save')} ₹{file.price - file.salePrice}
+              </span>
+            )}
+          </div>
+
+          {/* View Details Button (Visual Only) */}
+          <div className="mt-2 px-6 py-2 bg-slate-900 text-white text-[11px] font-black uppercase tracking-widest rounded-full shadow-lg shadow-slate-200 group-hover:bg-indigo-600 transition-colors">
+            {t('viewDetails')}
+          </div>
+        </div>
+
+        {/* Discount Badge (Top Corner) */}
+        {disc && (
+          <span className="absolute top-4 right-4 bg-indigo-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg shadow-xl shadow-indigo-100 uppercase tracking-tighter">
+            {disc} {t('off')}
+          </span>
+        )}
+      </div>
+    </Link>
   );
 };
 
@@ -537,6 +704,38 @@ const FileList = () => {
 
   // Mobile Bottom Sheet
   const [filterVisible, setFilterVisible] = useState(false);
+
+  // Typewriter effect state
+  const [typedText, setTypedText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [loopNum, setLoopNum] = useState(0);
+  const [typingSpeed, setTypingSpeed] = useState(150);
+
+  useEffect(() => {
+    const handleTyping = () => {
+      const texts = ['CDR', 'PSD'];
+      const current = loopNum % texts.length;
+      const fullText = texts[current];
+
+      setTypedText(
+        isDeleting
+          ? fullText.substring(0, typedText.length - 1)
+          : fullText.substring(0, typedText.length + 1)
+      );
+
+      setTypingSpeed(isDeleting ? 100 : 150);
+
+      if (!isDeleting && typedText === fullText) {
+        setTimeout(() => setIsDeleting(true), 3000);
+      } else if (isDeleting && typedText === '') {
+        setIsDeleting(false);
+        setLoopNum(loopNum + 1);
+      }
+    };
+
+    const timer = setTimeout(handleTyping, typingSpeed);
+    return () => clearTimeout(timer);
+  }, [typedText, isDeleting, loopNum, typingSpeed]);
 
   const observer = useRef();
   const lastFileElementRef = useCallback(node => {
@@ -616,13 +815,6 @@ const FileList = () => {
 
   /* ─── HANDLERS ─── */
   const handleFilterChange = (key, value) => {
-    // Reset other filters to default when tailored section clicked
-    setCategory('All');
-    setPriceRange('All');
-    setFileType([]);
-    setSortBy('newest');
-    setFontsIncluded('All');
-
     // Apply specific
     if (key === 'category') {
       if (value === 'Free') {
@@ -668,135 +860,158 @@ const FileList = () => {
   const categories = getCategories(t);
 
   return (
-    <div className="space-y-2">
-      {/* Search & Filter Bar */}
-      <div className="sticky top-14 z-30 bg-slate-50/95 backdrop-blur-sm py-1.5 -mx-4 px-4 sm:mx-0 sm:px-0">
-        <div className="flex gap-3 max-w-2xl mx-auto">
-          <div className="relative flex-1 group">
-            <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
-            <input
-              type="text"
-              placeholder={t('searchPlaceholder')}
-              className="w-full pl-10 pr-4 py-3 rounded-xl border-none bg-white shadow-sm ring-1 ring-gray-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all placeholder:text-gray-400 text-sm"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-          </div>
-          <button
-            onClick={() => setFilterVisible(true)}
-            className={`px-4 rounded-xl flex items-center gap-2 font-semibold shadow-sm transition-all text-sm ${activeFiltersCount > 0
-              ? 'bg-indigo-600 text-white ring-0'
-              : 'bg-white text-gray-600 ring-1 ring-gray-100 hover:bg-gray-50'
-              }`}
-          >
-            <LuListFilter className="w-5 h-5" />
-            <span className="hidden sm:inline">{t('filters')}</span>
-            {activeFiltersCount > 0 && (
-              <span className="bg-white/20 px-1.5 py-0.5 rounded-md text-xs backdrop-blur-sm">
-                {activeFiltersCount}
-              </span>
-            )}
-          </button>
+    <div className="space-y-0">
+      {/* Hero / Search Section */}
+      <div className="relative bg-[#0A192F] pt-10 pb-12 sm:pt-16 sm:pb-24 px-4 overflow-hidden -mx-4 sm:mx-0">
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+              <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.1" />
+            </pattern>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+          </svg>
         </div>
 
-        {/* Categories Horizontal Scroll */}
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 mask-linear-fade">
-          {categories.map(cat => {
-            const Icon = CATEGORY_ICONS[cat];
-            const isActive = category === cat || (cat === 'Free' && priceRange === 'Free');
-            const label = t(CATEGORY_KEYS[cat] || cat);
+        <div className="max-w-5xl mx-auto relative z-10 text-center">
+          <p className="text-[#ed3237] font-black text-[10px] sm:text-[14px] tracking-[0.2em] uppercase mb-4 animate-fade-in px-2">
+            हर सामान मिलेगा एक ही छत के नीचे...
+          </p>
+          <h1 className="text-white font-extrabold text-2xl sm:text-5xl md:text-6xl font-display mb-8 sm:mb-12 tracking-tight leading-tight px-2">
+            PREMIUM <span className="text-[#ed3237]">{typedText}</span> DESIGNS
+          </h1>
 
-            return (
+          {/* Search Bar Container */}
+          <div className="relative max-w-xl mx-auto group px-2 sm:px-0">
+            <div className="flex items-center bg-white rounded-full p-1 sm:p-1.5 shadow-2xl transition-all duration-300 focus-within:ring-4 focus-within:ring-[#ed3237]/20">
+              <input
+                type="text"
+                placeholder="Search for products.."
+                className="flex-1 bg-transparent pl-5 sm:pl-8 pr-4 py-2 sm:py-3 text-slate-900 focus:outline-none text-sm sm:text-base font-medium placeholder:text-gray-400"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
               <button
-                key={cat}
-                onClick={() => handleFilterChange('category', cat)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border ${isActive
-                  ? 'bg-slate-800 text-white border-slate-800 shadow-md transform scale-105'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                  }`}
+                onClick={() => {/* Handled by useEffect */ }}
+                className="bg-[#ed3237] hover:bg-[#c4282d] text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg shadow-[#ed3237]/30 active:scale-95 flex-shrink-0 mr-0.5"
               >
-                {Icon && <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-indigo-300' : 'text-slate-400'}`} />}
-                {label}
+                <LuSearch className="w-4 h-4 sm:w-5 h-5" />
               </button>
-            );
+            </div>
+          </div>
+
+          {/* Category Filtering - (Single Row Horizontal Scroll) */}
+          <div className="mt-8 flex gap-3 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+            {categories.filter(cat => cat !== 'All').map(cat => {
+              const isActive = category === cat;
+              const label = t(CATEGORY_KEYS[cat] || cat) || cat;
+
+              return (
+                <button
+                  key={cat}
+                  onClick={() => handleFilterChange('category', cat)}
+                  className={`px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-wider transition-all transform hover:-translate-y-0.5 whitespace-nowrap flex-shrink-0 ${isActive
+                    ? 'bg-white text-slate-900 shadow-lg shadow-white/20'
+                    : 'bg-[#ed3237] hover:bg-white/90 hover:text-[#ed3237] text-white shadow-md'
+                    }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Page Content */}
+      <div className="p-4 sm:p-6 space-y-2">
+        {/* Global Filter Button (Floating or small toggle if needed) */}
+        {!search && category === 'All' && (
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-black text-slate-900 font-display uppercase tracking-tight">Recent Collections</h2>
+            <button
+              onClick={() => setFilterVisible(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 text-slate-600 font-bold text-xs hover:bg-slate-200 transition-colors"
+            >
+              <LuSlidersHorizontal className="w-4 h-4" /> FILTERS
+            </button>
+          </div>
+        )}
+
+        {/* Show Feed Sections ONLY if on first page & no active filters (except default sort) */}
+        {/* Actually show feed sections if Category is All and Search is empty */}
+        {category === 'All' && search === '' && priceRange === 'All' && fileType.length === 0 && fontsIncluded === 'All' && page === 1 && viewMode === 'feed' && (
+          <HomeFeed onFilterChange={handleFilterChange} />
+        )}
+
+        {/* Main Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+          {files.map((file, index) => {
+            if (files.length === index + 1) {
+              return <div ref={lastFileElementRef} key={file._id} className="min-w-0"><HoverRevealCard file={file} t={t} /></div>;
+            } else {
+              return <div key={file._id} className="min-w-0"><HoverRevealCard file={file} t={t} /></div>;
+            }
           })}
         </div>
-      </div>
 
-      {/* Show Feed Sections ONLY if on first page & no active filters (except default sort) */}
-      {/* Actually show feed sections if Category is All and Search is empty */}
-      {category === 'All' && search === '' && priceRange === 'All' && fileType.length === 0 && fontsIncluded === 'All' && page === 1 && viewMode === 'feed' && (
-        <HomeFeed onFilterChange={handleFilterChange} />
-      )}
-
-      {/* Main Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
-        {files.map((file, index) => {
-          if (files.length === index + 1) {
-            return <div ref={lastFileElementRef} key={file._id}><ProductCard file={file} /></div>;
-          } else {
-            return <div key={file._id}><ProductCard file={file} /></div>;
-          }
-        })}
-      </div>
-
-      {/* Loaders & States */}
-      {loading && (
-        <div className="flex justify-center py-10">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-        </div>
-      )}
-
-      {!loading && files.length === 0 && (
-        <div className="text-center py-20">
-          <div className="bg-slate-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
-            <LuSearch className="w-10 h-10 text-slate-300" />
+        {/* Loaders & States */}
+        {loading && (
+          <div className="flex justify-center py-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
           </div>
-          <h3 className="text-lg font-bold text-slate-900">{t('noDesignsFound')}</h3>
-          <p className="text-slate-500 mt-1">{t('tryFilters')}</p>
-          <button
-            onClick={clearFilters}
-            className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-full text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
-          >
-            {t('clearAll')}
-          </button>
-          <button
-            onClick={() => {
-              clearFilters();
-              setViewMode('feed');
-            }}
-            className="mt-4 ml-4 px-6 py-2 bg-white border border-gray-200 text-gray-700 rounded-full text-sm font-semibold hover:bg-gray-50 transition-colors shadow-sm"
-          >
-            {t('home')}
-          </button>
-        </div>
-      )}
+        )}
 
-      {!loading && !hasMore && files.length > 0 && (
-        <div className="text-center py-10">
-          <p className="text-slate-400 text-sm font-medium bg-slate-50 inline-block px-4 py-1 rounded-full">{t('allDesignsShown')}</p>
-        </div>
-      )}
+        {!loading && files.length === 0 && (
+          <div className="text-center py-20">
+            <div className="bg-slate-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
+              <LuSearch className="w-10 h-10 text-slate-300" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900">{t('noDesignsFound')}</h3>
+            <p className="text-slate-500 mt-1">{t('tryFilters')}</p>
+            <button
+              onClick={clearFilters}
+              className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-full text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
+            >
+              {t('clearAll')}
+            </button>
+            <button
+              onClick={() => {
+                clearFilters();
+                setViewMode('feed');
+              }}
+              className="mt-4 ml-4 px-6 py-2 bg-white border border-gray-200 text-gray-700 rounded-full text-sm font-semibold hover:bg-gray-50 transition-colors shadow-sm"
+            >
+              {t('home')}
+            </button>
+          </div>
+        )}
 
-      <FilterSheet
-        visible={filterVisible}
-        onClose={() => setFilterVisible(false)}
-        category={category} setCategory={setCategory}
-        priceRange={priceRange} setPriceRange={setPriceRange}
-        customMin={customMin} setCustomMin={setCustomMin}
-        customMax={customMax} setCustomMax={setCustomMax}
-        fileType={fileType} setFileType={setFileType}
-        sortBy={sortBy} setSortBy={setSortBy}
-        fontsIncluded={fontsIncluded} setFontsIncluded={setFontsIncluded}
-        onClear={clearFilters}
-      />
+        {!loading && !hasMore && files.length > 0 && (
+          <div className="text-center py-10">
+            <p className="text-slate-400 text-sm font-medium bg-slate-50 inline-block px-4 py-1 rounded-full">{t('allDesignsShown')}</p>
+          </div>
+        )}
 
-      <style>{`
+        <FilterSheet
+          visible={filterVisible}
+          onClose={() => setFilterVisible(false)}
+          category={category} setCategory={setCategory}
+          priceRange={priceRange} setPriceRange={setPriceRange}
+          customMin={customMin} setCustomMin={setCustomMin}
+          customMax={customMax} setCustomMax={setCustomMax}
+          fileType={fileType} setFileType={setFileType}
+          sortBy={sortBy} setSortBy={setSortBy}
+          fontsIncluded={fontsIncluded} setFontsIncluded={setFontsIncluded}
+          onClear={clearFilters}
+        />
+
+        <style>{`
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .mask-linear-fade { mask-image: linear-gradient(to right, black 90%, transparent 100%); -webkit-mask-image: linear-gradient(to right, black 90%, transparent 100%); }
       `}</style>
+      </div>
     </div>
   );
 };

@@ -1,12 +1,9 @@
-/* Import Google Fonts: Outfit (Headings) and Plus Jakarta Sans (Body) */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-
 @import "tailwindcss";
 
 body {
   background-color: #f8fafc;
   /* Slate-50/100ish */
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: #0f172a;
   /* Slate-900 */
   -webkit-font-smoothing: antialiased;
@@ -18,7 +15,8 @@ h2,
 h3,
 h4,
 h5,
-h6 {
+h6,
+.font-display {
   font-family: 'Outfit', sans-serif;
 }
 
