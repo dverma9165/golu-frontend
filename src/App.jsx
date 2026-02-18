@@ -135,13 +135,21 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-8 font-display">
-              <Link to="/" className="text-[12px] font-black tracking-widest text-[#ed3237] hover:text-white transition-colors">HOME</Link>
-              <Link to="/about" className="text-[12px] font-black tracking-widest text-white hover:text-[#ed3237] transition-colors uppercase">About</Link>
-              <Link to="/terms" className="text-[12px] font-black tracking-widest text-white hover:text-[#ed3237] transition-colors uppercase">Terms & Conditions</Link>
-              <Link to="/contact" className="text-[12px] font-black tracking-widest text-white hover:text-[#ed3237] transition-colors uppercase">Contact Us</Link>
+              <Link to="/" className={`text-[12px] font-black tracking-widest transition-colors ${location.pathname === '/' ? 'text-[#ed3237]' : 'text-white hover:text-[#ed3237]'}`}>HOME</Link>
+              <Link to="/about" className={`text-[12px] font-black tracking-widest transition-colors uppercase ${location.pathname === '/about' ? 'text-[#ed3237]' : 'text-white hover:text-[#ed3237]'}`}>About</Link>
+              <Link to="/terms" className={`text-[12px] font-black tracking-widest transition-colors uppercase ${location.pathname === '/terms' ? 'text-[#ed3237]' : 'text-white hover:text-[#ed3237]'}`}>Terms & Conditions</Link>
+              <Link to="/contact" className={`text-[12px] font-black tracking-widest transition-colors uppercase ${location.pathname === '/contact' ? 'text-[#ed3237]' : 'text-white hover:text-[#ed3237]'}`}>Contact Us</Link>
             </div>
 
             <div className="hidden md:flex items-center gap-6">
+              {/* Language Toggle (Desktop) */}
+              <button
+                onClick={toggleLanguage}
+                className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-gray-300 border border-slate-700 font-display hover:bg-slate-700 transition-colors"
+              >
+                {language === 'en' ? 'HI' : 'EN'}
+              </button>
+
               {/* Login / Register */}
               {!token ? (
                 <Link to="/login" className="flex items-center gap-2 text-white hover:text-[#ed3237] transition-colors">
@@ -209,6 +217,37 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
                 <LuLogOut className="w-5 h-5" />
                 <span className="font-bold">{t('logout')}</span>
               </button>
+            )}
+
+            <div className="h-px bg-white/10 my-1"></div>
+
+            {/* Admin Mobile Links */}
+            {!isAdmin ? (
+              <button
+                onClick={() => { setIsLoginOpen(true); setIsMobileMenuOpen(false); }}
+                className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 text-slate-400 hover:text-white transition-colors text-left w-full"
+              >
+                <LuShieldCheck className="w-5 h-5" />
+                <span className="font-bold">{t('adminAccess')}</span>
+              </button>
+            ) : (
+              <>
+                <Link
+                  to="/admin"
+                  className="flex items-center gap-3 p-3 rounded-xl bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/30 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <LuRocket className="w-5 h-5" />
+                  <span className="font-bold">Admin Dashboard</span>
+                </Link>
+                <button
+                  onClick={() => { handleAdminLogout(); setIsMobileMenuOpen(false); }}
+                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/10 text-red-400 transition-colors text-left w-full"
+                >
+                  <LuLogOut className="w-5 h-5" />
+                  <span className="font-bold">{t('adminLogout')}</span>
+                </button>
+              </>
             )}
           </div>
         )}

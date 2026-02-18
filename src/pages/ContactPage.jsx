@@ -31,7 +31,7 @@ const ContactPage = () => {
                                 </div>
                                 <div>
                                     <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Call Us</h4>
-                                    <p className="text-xl font-bold font-display">+91 999 000 0000</p>
+                                    <p className="text-xl font-bold font-display">+91 9977882148</p>
                                 </div>
                             </div>
 
@@ -41,11 +41,11 @@ const ContactPage = () => {
                                 </div>
                                 <div>
                                     <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Email Us</h4>
-                                    <p className="text-xl font-bold font-display">hello@dikshastudio.com</p>
+                                    <p className="text-xl font-bold font-display">rajv437@gmail.com</p>
                                 </div>
                             </div>
 
-                            <div className="flex gap-6 items-start group">
+                            {/* <div className="flex gap-6 items-start group">
                                 <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center flex-shrink-0 group-hover:bg-[#ed3237] transition-all duration-300">
                                     <LuMapPin className="w-6 h-6 text-[#ed3237] group-hover:text-white" />
                                 </div>
@@ -53,7 +53,7 @@ const ContactPage = () => {
                                     <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Visit Us</h4>
                                     <p className="text-xl font-bold font-display leading-tight">123 Design Street, Creative Hub, <br />New Delhi - 110001</p>
                                 </div>
-                            </div>
+                            </div> */}
 
                             <div className="flex gap-6 items-start group">
                                 <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center flex-shrink-0 group-hover:bg-[#ed3237] transition-all duration-300">
@@ -61,7 +61,7 @@ const ContactPage = () => {
                                 </div>
                                 <div>
                                     <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Hours</h4>
-                                    <p className="text-xl font-bold font-display">Mon - Sat: 10AM - 8PM</p>
+                                    <p className="text-xl font-bold font-display">24x7 - Every Day</p>
                                 </div>
                             </div>
                         </div>

@@ -474,7 +474,7 @@ const getFeedSections = (t) => [
 ];
 
 /* ─── HOME FEED COMPONENT ─── */
-const HomeFeed = ({ onFilterChange }) => {
+const HomeFeed = ({ onFilterChange, onLoadIds }) => {
   const [sectionData, setSectionData] = useState({});
   const [feedLoading, setFeedLoading] = useState(true);
   const { t } = useLanguage();
@@ -506,9 +506,17 @@ const HomeFeed = ({ onFilterChange }) => {
     return allFiles;
   }, [sectionData]);
 
+  // Notify parent of IDs
+  useEffect(() => {
+    if (onLoadIds && allFeedFiles.length > 0) {
+      const ids = new Set(allFeedFiles.map(f => f._id));
+      onLoadIds(ids);
+    }
+  }, [allFeedFiles, onLoadIds]);
+
   if (feedLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="aspect-square bg-white/60 animate-pulse rounded-xl" />
         ))}
@@ -520,7 +528,7 @@ const HomeFeed = ({ onFilterChange }) => {
 
   return (
     <div className="w-full px-3 mb-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {allFeedFiles.map(file => (
           <HoverRevealCard key={file._id} file={file} t={t} />
         ))}
@@ -711,6 +719,9 @@ const FileList = () => {
   const [loopNum, setLoopNum] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(150);
 
+  // Deduplication state
+  const [feedFileIds, setFeedFileIds] = useState(new Set());
+
   useEffect(() => {
     const handleTyping = () => {
       const texts = ['CDR', 'PSD'];
@@ -810,6 +821,7 @@ const FileList = () => {
   useEffect(() => {
     setPage(1);
     setFiles([]);
+    setFeedFileIds(new Set());
   }, [search, category, priceRange, customMin, customMax, fileType, sortBy, fontsIncluded]);
 
 
@@ -835,6 +847,10 @@ const FileList = () => {
     // Scroll to top of list container
     document.getElementById('main-scroll-container')?.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const handleFeedLoad = useCallback((ids) => {
+    setFeedFileIds(ids);
+  }, []);
 
   const clearFilters = () => {
     setSearch('');
@@ -942,14 +958,14 @@ const FileList = () => {
 
         {/* Show Feed Sections ONLY if on first page & no active filters (except default sort) */}
         {/* Actually show feed sections if Category is All and Search is empty */}
-        {category === 'All' && search === '' && priceRange === 'All' && fileType.length === 0 && fontsIncluded === 'All' && page === 1 && viewMode === 'feed' && (
-          <HomeFeed onFilterChange={handleFilterChange} />
+        {category === 'All' && search === '' && priceRange === 'All' && fileType.length === 0 && fontsIncluded === 'All' && viewMode === 'feed' && (
+          <HomeFeed onFilterChange={handleFilterChange} onLoadIds={handleFeedLoad} />
         )}
 
         {/* Main Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
-          {files.map((file, index) => {
-            if (files.length === index + 1) {
+          {files.filter(f => !feedFileIds.has(f._id)).map((file, index, arr) => {
+            if (arr.length === index + 1) {
               return <div ref={lastFileElementRef} key={file._id} className="min-w-0"><HoverRevealCard file={file} t={t} /></div>;
             } else {
               return <div key={file._id} className="min-w-0"><HoverRevealCard file={file} t={t} /></div>;

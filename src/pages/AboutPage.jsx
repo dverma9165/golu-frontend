@@ -73,29 +73,6 @@ const AboutPage = () => {
                         </p>
                     </div>
                 </div>
-
-                <div className="mt-20 bg-white p-10 sm:p-20 rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100 text-center overflow-hidden relative">
-                    {/* Abstract Decoration */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-full -mr-32 -mt-32"></div>
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-red-50/50 rounded-full -ml-32 -mb-32"></div>
-
-                    <div className="relative z-10 max-w-3xl mx-auto">
-                        <h2 className="text-3xl sm:text-5xl font-black text-slate-900 font-display mb-8 uppercase tracking-tighter shadow-sm">
-                            We help you <span className="text-[#ed3237]">Create More</span> with less effort.
-                        </h2>
-                        <p className="text-slate-500 text-lg leading-relaxed mb-10 italic">
-                            "Starting a design from scratch can be time-consuming. We provide the foundation so you can focus on the artistic touches that truly matter."
-                        </p>
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <div className="w-full sm:w-auto px-10 py-4 bg-slate-900 text-white rounded-full font-black text-sm tracking-widest hover:bg-[#ed3237] transition-all cursor-pointer">
-                                JOIN OUR COMMUNITY
-                            </div>
-                            <div className="w-full sm:w-auto px-10 py-4 bg-transparent border-2 border-slate-900 text-slate-900 rounded-full font-black text-sm tracking-widest hover:bg-slate-50 transition-all cursor-pointer">
-                                BROWSE DESIGNS
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     );

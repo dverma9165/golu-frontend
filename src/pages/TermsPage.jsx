@@ -60,18 +60,6 @@ const TermsPage = () => {
                             Information collected is used solely for order processing and account management.
                         </p>
                     </section>
-
-                    <section className="bg-[#0A192F] p-8 rounded-3xl shadow-2xl shadow-slate-900/20 text-white">
-                        <h2 className="text-xl font-black font-display uppercase mb-4 tracking-wider">Need Clarification?</h2>
-                        <p className="text-slate-400 mb-6 text-sm">
-                            If you have any questions regarding these terms, please contact our support team before proceeding with any transaction.
-                        </p>
-                        <div className="flex justify-start">
-                            <a href="/contact" className="px-6 py-3 bg-[#ed3237] text-white rounded-full font-bold text-xs tracking-widest hover:bg-red-700 transition-colors uppercase">
-                                Contact Support
-                            </a>
-                        </div>
-                    </section>
                 </div>
             </div>
         </div>
