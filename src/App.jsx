@@ -109,7 +109,10 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 flex flex-col transition-colors duration-300">
+    <div
+      className="bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 flex flex-col transition-colors duration-300"
+      style={{ height: '100dvh', overflow: 'hidden' }}
+    >
 
       {/* Abstract Background Shapes */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
@@ -118,7 +121,8 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
         <div className="absolute bottom-[-10%] left-[20%] w-[30%] h-[30%] bg-indigo-200/30 rounded-full blur-[100px]" />
       </div>
 
-      <nav className="fixed w-full top-0 z-50 bg-slate-900 backdrop-blur-md border-b border-slate-800 transition-all duration-300">
+      {/* Header / Nav — sticky inside locked viewport */}
+      <nav className="w-full flex-shrink-0 z-50 bg-slate-900 backdrop-blur-md border-b border-slate-800 transition-all duration-300">
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-14 items-center">
             {/* Logo Area */}
@@ -253,41 +257,46 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
         )}
       </nav>
 
-      {/* Spacer for Fixed Navbar */}
-      <div className="h-14"></div>
+      {/* Scrollable content area — only this div scrolls */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden" style={{ WebkitOverflowScrolling: 'touch' }}>
 
-      <Routes>
-        <Route path="/" element={<FileList />} />
-        <Route path="/product/:id" element={<ProductPage token={token} />} />
-        <Route path="/login" element={<Login setToken={setToken} />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/cart" element={token ? <CartPage token={token} /> : <Navigate to="/login" replace />} />
-        <Route path="/my-orders" element={token ? <MyOrdersPage /> : <Navigate to="/login" replace />} />
-        <Route path="/admin" element={isAdmin ? <AdminDashboard adminPassword={adminPassword} /> : <Navigate to="/" />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/terms" element={<TermsPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-      </Routes>
+        <Routes>
+          <Route path="/" element={<FileList />} />
+          <Route path="/product/:id" element={<ProductPage token={token} />} />
+          <Route path="/login" element={<Login setToken={setToken} />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/cart" element={token ? <CartPage token={token} /> : <Navigate to="/login" replace />} />
+          <Route path="/my-orders" element={token ? <MyOrdersPage /> : <Navigate to="/login" replace />} />
+          <Route path="/admin" element={isAdmin ? <AdminDashboard adminPassword={adminPassword} /> : <Navigate to="/" />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+        </Routes>
 
-      {/* Footer */}
-      <div className="hidden md:block">
-        <Footer isAdmin={isAdmin} onOpenLogin={() => setIsLoginOpen(true)} onLogout={handleAdminLogout} />
-      </div>
-      {/* Mobile Footer Area */}
-      <div className="md:hidden pb-24 px-4">
-        <div className="text-center py-8 border-t border-slate-100 flex flex-col items-center gap-2">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] font-display">
-            Diksha Design & Print
-          </p>
-          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-loose">
-            © {new Date().getFullYear()} All Rights Reserved.<br />
-            Premium CDR & PSD Assets
-          </p>
+        {/* Footer */}
+        <div className="hidden md:block">
+          <Footer isAdmin={isAdmin} onOpenLogin={() => setIsLoginOpen(true)} onLogout={handleAdminLogout} />
         </div>
-      </div>
+        {/* Mobile Footer Area */}
+        <div className="md:hidden px-4">
+          <div className="text-center py-8 border-t border-slate-100 flex flex-col items-center gap-2">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] font-display">
+              Diksha Design & Print
+            </p>
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-loose">
+              © {new Date().getFullYear()} All Rights Reserved.<br />
+              Premium CDR & PSD Assets
+            </p>
+          </div>
+        </div>
+        <AdminLogin isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} onLogin={handleAdminLogin} />
+      </div>{/* end scrollable area */}
 
-      {/* Mobile Bottom Nav */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+      {/* Mobile Bottom Nav — part of locked flex column, always stays at bottom */}
+      <div
+        className="md:hidden flex-shrink-0 bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      >
         <div className="flex items-center justify-around px-2 py-2 relative">
           <Link to="/" className={`flex flex-col items-center gap-0.5 px-3 py-1 ${location.pathname === '/' ? 'text-[#ed3237]' : 'text-slate-400'}`}>
             <LuHouse className="w-5 h-5" />
@@ -307,7 +316,6 @@ function AppContent({ token, setToken, isAdmin, setIsAdmin, isLoginOpen, setIsLo
         </div>
       </div>
 
-      <AdminLogin isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} onLogin={handleAdminLogin} />
     </div>
   );
 }

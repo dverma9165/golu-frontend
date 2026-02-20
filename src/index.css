@@ -1,13 +1,21 @@
 @import "tailwindcss";
 
+html {
+  /* Lock viewport — mobile browser toolbar can NEVER shift fixed elements */
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
+
 body {
   background-color: #f8fafc;
-  /* Slate-50/100ish */
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: #0f172a;
-  /* Slate-900 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* body is locked to 100% of html — scrolling happens in the inner wrapper */
+  height: 100%;
+  overflow: hidden;
 }
 
 h1,
