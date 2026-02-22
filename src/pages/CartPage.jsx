@@ -5,6 +5,7 @@ import { FaShoppingCart, FaTrash, FaArrowRight, FaShieldAlt } from 'react-icons/
 
 import CheckoutModal from '../components/CheckoutModal';
 import { useLanguage } from '../context/LanguageContext';
+import { getDisplayableImageUrl } from '../utils/imageUtils';
 
 const CartPage = ({ token }) => {
     const { t } = useLanguage();
@@ -119,7 +120,7 @@ const CartPage = ({ token }) => {
                                     <div className="w-full sm:w-24 h-24 bg-slate-100 rounded-xl overflow-hidden shrink-0 relative">
                                         {item.product?.thumbnail?.googleDriveId ? (
                                             <img
-                                                src={`${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${item.product.thumbnail.googleDriveId}`}
+                                                src={getDisplayableImageUrl(item.product.thumbnail?.googleDriveId)}
                                                 alt={item.product.title}
                                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                             />

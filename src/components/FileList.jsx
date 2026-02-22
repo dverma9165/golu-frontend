@@ -12,6 +12,7 @@ import {
   LuSearch, LuX, LuChevronDown, LuSlidersHorizontal, LuZoomOut,
   LuBox, LuLayoutGrid, LuCircleUser, LuListFilter
 } from 'react-icons/lu';
+import { getDisplayableImageUrl } from '../utils/imageUtils';
 
 /* ─── CONSTANTS ─── */
 const CATEGORY_ICONS = {
@@ -75,9 +76,7 @@ const discount = (price, sale) =>
 /* ─── PRODUCT CARD ─── */
 const ProductCard = ({ file }) => {
   const { t } = useLanguage();
-  const thumb = file.thumbnail?.googleDriveId
-    ? `${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${file.thumbnail.googleDriveId}`
-    : null;
+  const thumb = getDisplayableImageUrl(file.thumbnail?.googleDriveId);
   const disc = discount(file.price, file.salePrice);
   const displayPrice = file.salePrice ?? file.price ?? 0;
   const savedAmount = file.price && file.salePrice ? file.price - file.salePrice : 0;
@@ -298,9 +297,7 @@ const FilterSheet = ({
 /* ─── FEED SECTION CARD (horizontal scroll) ─── */
 const FeedCard = ({ file }) => {
   const { t } = useLanguage();
-  const thumb = file.thumbnail?.googleDriveId
-    ? `${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${file.thumbnail.googleDriveId}`
-    : null;
+  const thumb = getDisplayableImageUrl(file.thumbnail?.googleDriveId);
   const disc = discount(file.price, file.salePrice);
   const displayPrice = file.salePrice ?? file.price ?? 0;
   const savedAmount = file.price && file.salePrice ? file.price - file.salePrice : 0;
@@ -539,9 +536,7 @@ const HomeFeed = ({ onFilterChange, onLoadIds }) => {
 
 /* ─── HOVER REVEAL CARD ─── */
 const HoverRevealCard = ({ file, t }) => {
-  const thumb = file.thumbnail?.googleDriveId
-    ? `${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${file.thumbnail.googleDriveId}`
-    : null;
+  const thumb = getDisplayableImageUrl(file.thumbnail?.googleDriveId);
   const displayPrice = file.salePrice ?? file.price ?? 0;
   const disc = discount(file.price, file.salePrice);
   const categoryLabel = t(CATEGORY_KEYS[file.category] || file.category) || file.category;

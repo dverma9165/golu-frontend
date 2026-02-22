@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import FileUpload from '../components/FileUpload';
 import { FaCheck, FaExclamationCircle, FaSpinner } from 'react-icons/fa';
 import { LuTrash2 } from 'react-icons/lu';
+import { getDisplayableImageUrl } from '../utils/imageUtils';
 
 const AdminDashboard = ({ adminPassword }) => {
     // Orders state removed
@@ -188,7 +189,7 @@ const AdminDashboard = ({ adminPassword }) => {
                                                         <div className="w-12 h-12 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex-shrink-0">
                                                             {product.thumbnail && product.thumbnail.googleDriveId ? (
                                                                 <img
-                                                                    src={`${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${product.thumbnail.googleDriveId}`}
+                                                                    src={getDisplayableImageUrl(product.thumbnail.googleDriveId)}
                                                                     alt={product.title}
                                                                     className="w-full h-full object-cover"
                                                                 />
@@ -257,7 +258,7 @@ const AdminDashboard = ({ adminPassword }) => {
                                             <div className="w-20 h-20 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex-shrink-0">
                                                 {product.thumbnail && product.thumbnail.googleDriveId ? (
                                                     <img
-                                                        src={`${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${product.thumbnail.googleDriveId}`}
+                                                        src={getDisplayableImageUrl(product.thumbnail.googleDriveId)}
                                                         alt={product.title}
                                                         className="w-full h-full object-cover"
                                                     />

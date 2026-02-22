@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { FaTimes, FaCheck, FaSpinner, FaQrcode } from 'react-icons/fa';
 import api from '../services/api';
+import { getDisplayableImageUrl } from '../utils/imageUtils';
 
 const CheckoutModal = ({ isOpen, onClose, product, totalAmount, cartItems, onSuccess }) => {
     const [loading, setLoading] = useState(false);
@@ -216,7 +217,7 @@ const CheckoutModal = ({ isOpen, onClose, product, totalAmount, cartItems, onSuc
                                     <div className="w-full bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4 mb-8 text-left hover:border-blue-300 transition-colors">
                                         <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
                                             {product.thumbnail?.googleDriveId ? (
-                                                <img src={`${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${product.thumbnail.googleDriveId}`} className="w-full h-full object-cover" alt="" />
+                                                <img src={getDisplayableImageUrl(product.thumbnail.googleDriveId)} className="w-full h-full object-cover" alt="" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No Img</div>
                                             )}

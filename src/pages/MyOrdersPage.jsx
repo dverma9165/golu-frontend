@@ -3,6 +3,7 @@ import api from '../services/api';
 import { FaDownload, FaSpinner, FaChevronLeft, FaChevronRight, FaPen, FaFileAlt, FaFilePdf, FaFileExcel, FaFileImage } from 'react-icons/fa';
 import ReviewModal from '../components/ReviewModal';
 import { useLanguage } from '../context/LanguageContext';
+import { getDisplayableImageUrl } from '../utils/imageUtils';
 
 const MyOrdersPage = () => {
     const { t } = useLanguage();
@@ -90,9 +91,7 @@ const MyOrdersPage = () => {
                             const discountPercent = hasDiscount ? Math.round(((price - salePrice) / price) * 100) : 0;
 
                             // Thumbnail Logic
-                            const thumbnailLink = product.thumbnail?.googleDriveId
-                                ? `${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${product.thumbnail.googleDriveId}`
-                                : null;
+                            const thumbnailLink = getDisplayableImageUrl(product.thumbnail?.googleDriveId);
 
                             return (
                                 <div key={order._id} className="bg-white rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden group">

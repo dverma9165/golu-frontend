@@ -4,6 +4,7 @@ import api from '../services/api';
 import { FaShoppingCart, FaWhatsapp, FaEye, FaShieldAlt, FaCartPlus, FaDownload, FaLock, FaCheckCircle, FaGift } from 'react-icons/fa';
 import CheckoutModal from '../components/CheckoutModal';
 import { useLanguage } from '../context/LanguageContext';
+import { getDisplayableImageUrl } from '../utils/imageUtils';
 
 const ProductPage = ({ token }) => {
     const { t } = useLanguage();
@@ -142,7 +143,7 @@ const ProductPage = ({ token }) => {
 
                         {product.thumbnail && product.thumbnail.googleDriveId ? (
                             <img
-                                src={`${import.meta.env.VITE_DRIVE_URL_PREFIX || 'https://drive.google.com/thumbnail?id='}${product.thumbnail.googleDriveId}`}
+                                src={getDisplayableImageUrl(product.thumbnail.googleDriveId)}
                                 alt={product.title}
                                 className="relative z-10 w-full max-h-[300px] md:max-h-[500px] object-contain drop-shadow-2xl transition-transform duration-700 hover:scale-105"
                             />
