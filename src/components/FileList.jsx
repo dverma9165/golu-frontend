@@ -541,140 +541,111 @@ const HoverRevealCard = ({ file, t }) => {
   const disc = discount(file.price, file.salePrice);
   const categoryLabel = t(CATEGORY_KEYS[file.category] || file.category) || file.category;
 
-  // Generate a consistent random pastel background color based on file ID
-  const bgColor = React.useMemo(() => {
-    const colors = [
-      'bg-red-50', 'bg-orange-50', 'bg-amber-50', 'bg-yellow-50',
-      'bg-lime-50', 'bg-green-50', 'bg-emerald-50', 'bg-teal-50',
-      'bg-cyan-50', 'bg-sky-50', 'bg-blue-50', 'bg-indigo-50',
-      'bg-violet-50', 'bg-purple-50', 'bg-fuchsia-50', 'bg-pink-50', 'bg-rose-50'
-    ];
-    let hash = 0;
-    const str = file._id || '';
-    for (let i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const index = Math.abs(hash) % colors.length;
-    return colors[index];
-  }, [file._id]);
+
 
   return (
     <Link
       to={`/product/${file._id}`}
       style={{ textDecoration: 'none' }}
-      className={`relative block aspect-square rounded-2xl overflow-hidden group shadow-md hover:shadow-xl transition-all duration-300 ${bgColor}`}
+      className="relative block md:aspect-square rounded-2xl overflow-hidden group bg-white border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col md:block"
     >
-      {/* Premium Indian Traditional Frame Overlay */}
-      <div className="absolute inset-0 z-10 pointer-events-none border-[6px] border-[#ed3237]/5 group-hover:border-[#ed3237]/10 transition-colors duration-500">
-        {/* Ornate Corner Motifs */}
-        <div className="absolute top-1 left-1 w-10 h-10 text-[#ed3237] opacity-40 group-hover:opacity-90 transition-all duration-500 group-hover:scale-110">
-          <svg viewBox="0 0 100 100" className="w-full h-full fill-current">
-            <path d="M0 0 L40 0 C25 0 0 25 0 40 Z M15 15 C20 30 30 20 15 15 M5 25 Q 15 25 15 5 Q 5 5 5 25" />
-            <circle cx="8" cy="8" r="4" />
-          </svg>
-        </div>
-        <div className="absolute top-1 right-1 w-10 h-10 text-[#ed3237] opacity-40 group-hover:opacity-90 transition-all duration-500 group-hover:scale-110 rotate-90">
-          <svg viewBox="0 0 100 100" className="w-full h-full fill-current">
-            <path d="M0 0 L40 0 C25 0 0 25 0 40 Z M15 15 C20 30 30 20 15 15 M5 25 Q 15 25 15 5 Q 5 5 5 25" />
-            <circle cx="8" cy="8" r="4" />
-          </svg>
-        </div>
-        <div className="absolute bottom-1 left-1 w-10 h-10 text-[#ed3237] opacity-40 group-hover:opacity-90 transition-all duration-500 group-hover:scale-110 -rotate-90">
-          <svg viewBox="0 0 100 100" className="w-full h-full fill-current">
-            <path d="M0 0 L40 0 C25 0 0 25 0 40 Z M15 15 C20 30 30 20 15 15 M5 25 Q 15 25 15 5 Q 5 5 5 25" />
-            <circle cx="8" cy="8" r="4" />
-          </svg>
-        </div>
-        <div className="absolute bottom-1 right-1 w-10 h-10 text-[#ed3237] opacity-40 group-hover:opacity-90 transition-all duration-500 group-hover:scale-110 rotate-180">
-          <svg viewBox="0 0 100 100" className="w-full h-full fill-current">
-            <path d="M0 0 L40 0 C25 0 0 25 0 40 Z M15 15 C20 30 30 20 15 15 M5 25 Q 15 25 15 5 Q 5 5 5 25" />
-            <circle cx="8" cy="8" r="4" />
-          </svg>
-        </div>
+      {/* Premium Design Accents */}
+      <div className="absolute inset-x-0 top-0 h-1.5 bg-linear-to-r from-indigo-500 via-purple-500 to-[#ed3237] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-30"></div>
 
-        {/* Inner Dotted Decorative Row */}
-        <div className="absolute inset-2 border border-dashed border-[#ed3237]/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-
-        {/* Subtle Decorative Pattern Border */}
-        <div className="absolute inset-0 border-[1px] border-[#ed3237]/10 group-hover:border-[#ed3237]/30 transition-colors duration-500 rounded-2xl"></div>
+      {/* Decorative Corner (Modern Minimalist) */}
+      <div className="absolute top-2 right-2 w-8 h-8 opacity-0 group-hover:opacity-100 transition-all duration-500 z-20">
+        <div className="absolute top-0 right-0 w-full h-[1px] bg-indigo-500/30"></div>
+        <div className="absolute top-0 right-0 w-[1px] h-full bg-indigo-500/30"></div>
       </div>
-      {/* Image (Visible Always) */}
-      <div className="w-full h-full p-4 flex items-center justify-center">
+
+      {/* Image Section */}
+      <div className="w-full aspect-square md:h-full p-2 md:p-6 flex items-center justify-center bg-slate-50/50 group-hover:bg-white transition-colors duration-500">
         {thumb ? (
           <img
             src={thumb}
             alt={file.title}
-            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 mix-blend-multiply"
+            className="w-full h-full object-contain transition-all duration-700 group-hover:scale-105 mix-blend-multiply drop-shadow-sm group-hover:drop-shadow-xl"
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-300">
-            <LuFileImage className="text-5xl" />
+          <div className="w-full h-full flex items-center justify-center text-slate-200">
+            <LuFileImage className="text-5xl opacity-20" />
           </div>
         )}
+
+        {/* Floating Badges */}
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-20">
+          {disc && (
+            <span className="bg-[#ed3237] text-white text-[9px] font-black px-2 py-0.5 rounded-lg shadow-lg shadow-[#ed3237]/20 uppercase tracking-tighter">
+              {disc}% {t('off')}
+            </span>
+          )}
+          {file.fileType && (
+            <span className="bg-white/90 backdrop-blur-md text-slate-900 border border-slate-100 text-[8px] font-bold px-2 py-0.5 rounded-lg shadow-sm">
+              {file.fileType}
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* Mobile-only info bar (since hover doesn't exist on mobile) */}
-      <div className="md:hidden absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm p-3 border-t border-gray-100 flex flex-col items-center">
-        <h4 className="text-[10px] font-bold text-slate-800 line-clamp-1 w-full text-center mb-0.5">{file.title || t('untitled')}</h4>
-        <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-black text-[#ed3237]">{displayPrice === 0 ? t('free') : `₹${displayPrice}`}</span>
-          {disc && <span className="text-[9px] text-slate-400 line-through">₹{file.price}</span>}
+      {/* Mobile-only info section */}
+      <div className="md:hidden bg-white p-4 flex flex-col gap-2 relative z-20 border-t border-slate-50">
+        <div className="flex flex-col gap-0.5">
+          <p className="text-[9px] font-extrabold tracking-widest text-[#ed3237] uppercase">
+            {categoryLabel}
+          </p>
+          <h4 className="text-[13px] font-bold text-slate-900 line-clamp-2 leading-tight min-h-[2.5rem]">{file.title || t('untitled')}</h4>
+        </div>
+
+        <div className="flex items-center justify-between mt-1">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-lg font-black text-slate-900">{displayPrice === 0 ? t('free') : `₹${displayPrice}`}</span>
+            {disc && <span className="text-[10px] text-slate-400 line-through decoration-slate-300">₹{file.price}</span>}
+          </div>
+          <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white shadow-lg">
+            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+              <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+            </svg>
+          </div>
         </div>
       </div>
 
       {/* Hover Overlay with Details (Desktop Only) */}
-      <div className="hidden md:flex absolute inset-0 bg-white/95 opacity-0 group-hover:opacity-100 transition-all duration-300 flex-col justify-center items-center text-center p-6 backdrop-blur-sm border-2 border-transparent group-hover:border-indigo-500/10 font-display">
-        <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 w-full flex flex-col items-center">
-          <p className="text-[10px] font-bold tracking-[0.2em] text-indigo-600 uppercase mb-2">
+      <div className="hidden md:flex absolute inset-0 bg-slate-900/40 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 flex-col justify-end p-6 z-40">
+        <div className="transform translate-y-8 group-hover:translate-y-0 transition-all duration-500 delay-75">
+          <p className="text-[10px] font-black tracking-widest text-indigo-300 uppercase mb-2">
             {categoryLabel}
           </p>
 
-          <h3 className="text-slate-900 font-extrabold text-lg leading-tight mb-3 line-clamp-2 px-2">
+          <h3 className="text-white font-extrabold text-xl leading-tight mb-4 line-clamp-2">
             {file.title || t('untitled')}
           </h3>
 
-          {/* Rating */}
-          {(file.rating || 0) > 0 && (
-            <div className="flex items-center justify-center gap-1.5 mb-4">
-              <div className="flex text-amber-400 gap-0.5">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <LuStar key={i} className={`w-3.5 h-3.5 ${i < Math.round(file.rating) ? 'fill-current' : 'text-slate-200'}`} />
-                ))}
-              </div>
-              <span className="text-slate-400 text-[10px] font-bold">({file.numReviews})</span>
-            </div>
-          )}
-
-          {/* Pricing Section */}
-          <div className="flex flex-col items-center gap-1 mb-6">
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-black text-slate-900">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col">
+              <span className="text-white text-2xl font-black">
                 {displayPrice === 0 ? t('free') : `₹${displayPrice}`}
               </span>
               {disc && (
-                <span className="text-sm text-slate-400 line-through decoration-red-400/50">₹{file.price}</span>
+                <span className="text-indigo-200 text-xs line-through opacity-70">₹{file.price}</span>
               )}
             </div>
-            {disc && (
-              <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                {t('save')} ₹{file.price - file.salePrice}
-              </span>
+
+            {(file.rating || 0) > 0 && (
+              <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-xl px-2.5 py-1 rounded-full border border-white/20">
+                <LuStar className="w-3.5 h-3.5 text-yellow-400 fill-current" />
+                <span className="text-white text-[11px] font-bold">{file.rating?.toFixed(1)}</span>
+              </div>
             )}
           </div>
 
-          {/* View Details Button (Visual Only) */}
-          <div className="mt-2 px-6 py-2 bg-slate-900 text-white text-[11px] font-black uppercase tracking-widest rounded-full shadow-lg shadow-slate-200 group-hover:bg-indigo-600 transition-colors">
+          <div className="w-full py-3 bg-white text-slate-900 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl shadow-2xl flex items-center justify-center gap-2 hover:bg-indigo-50 transition-colors">
             {t('viewDetails')}
+            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+              <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+            </svg>
           </div>
         </div>
-
-        {/* Discount Badge (Top Corner) */}
-        {disc && (
-          <span className="absolute top-4 right-4 bg-indigo-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg shadow-xl shadow-indigo-100 uppercase tracking-tighter">
-            {disc} {t('off')}
-          </span>
-        )}
       </div>
     </Link>
   );
@@ -685,7 +656,8 @@ const FileList = () => {
   const { t } = useLanguage();
   const location = useLocation();
   const [files, setFiles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [activeCategories, setActiveCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -772,6 +744,19 @@ const FileList = () => {
     }
   }, [location.search]);
 
+  // Fetch active categories
+  useEffect(() => {
+    const fetchActiveCategories = async () => {
+      try {
+        const response = await api.get('/api/files/active-categories');
+        setActiveCategories(response.data);
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+    fetchActiveCategories();
+  }, []);
+
   // Fetch logic
   useEffect(() => {
     setLoading(true);
@@ -821,9 +806,9 @@ const FileList = () => {
 
 
   /* ─── HANDLERS ─── */
-  const handleFilterChange = (key, value) => {
+  const handleFilterChange = (type, value) => {
     // Apply specific
-    if (key === 'category') {
+    if (type === 'category') {
       if (value === 'Free') {
         setPriceRange('Free');
         setCategory('All');
@@ -914,8 +899,8 @@ const FileList = () => {
           </div>
 
           {/* Category Filtering - (Single Row Horizontal Scroll) */}
-          <div className="mt-8 flex gap-3 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
-            {categories.filter(cat => cat !== 'All').map(cat => {
+          <div className="mt-8 flex gap-3 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:justify-center">
+            {['All', 'Free', ...activeCategories.filter(cat => cat !== 'Free')].map(cat => {
               const isActive = category === cat;
               const label = t(CATEGORY_KEYS[cat] || cat) || cat;
 
@@ -937,7 +922,7 @@ const FileList = () => {
       </div>
 
       {/* Main Page Content */}
-      <div className="p-4 sm:p-6 space-y-2">
+      <div className="p-2 sm:p-6 space-y-2">
         {/* Global Filter Button (Floating or small toggle if needed) */}
         {!search && category === 'All' && (
           <div className="flex justify-between items-center mb-6">
@@ -969,7 +954,7 @@ const FileList = () => {
         </div>
 
         {/* Loaders & States */}
-        {loading && (
+        {loading && viewMode !== 'feed' && (
           <div className="flex justify-center py-10">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
           </div>
